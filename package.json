@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "start": "node server.js"
+    "start": "DEBUG='parkify*' node server.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   "dependencies": {
     "debug": "^3.0.0",
     "express": "^4.15.4",
-    "http-errors": "^1.6.2"
+    "http-errors": "^1.6.2",
+    "mongoose": "^4.11.6"
   }
 }
