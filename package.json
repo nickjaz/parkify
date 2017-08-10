@@ -1,0 +1,24 @@
+{
+  "name": "parkify",
+  "version": "1.0.0",
+  "description": "air bnb for parking spaces",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "start": "node server.js",
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickjaz/parkify.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nickjaz/parkify/issues"
+  },
+  "homepage": "https://github.com/nickjaz/parkify#readme"
+}
