@@ -9,7 +9,7 @@ const transactionSchema = Schema({
   hostId: { type: Schema.Types.ObjectId, required: true },
   guestId: { type: Schema.Types.ObjectId, required: true },
   spotId: { type: Schema.Types.ObjectId, required: true },
-  price: { type: Schema.Types.ObjectId, required: true }
+  price: { type: Number, required: true }
 });
 
 module.exports = mongoose.model('transaction', transactionSchema);
