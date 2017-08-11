@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "DEBUG='parkify*' mocha",
-    "start": "DEBUG='parkify*' node server.js"
+    "test-win": "SET DEBUG=parkify* && mocha",
+    "start": "DEBUG='parkify*' node server.js",
+    "start-win": "SET DEBUG=parkify* && node server.js"
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,8 @@
   },
   "devDependencies": {
     "chai": "^4.1.1",
+    "coveralls": "^2.13.1",
+    "istanbul": "^0.4.5",
     "mocha": "^3.5.0",
     "superagent": "^3.5.2"
   }
