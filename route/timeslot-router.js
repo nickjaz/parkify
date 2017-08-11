@@ -21,11 +21,11 @@ timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, func
   debug('GET: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
   Timeslot.findById(request.params.id)
-    .then(timeslot => {
-      if(!timeslot) return next(createError(404, 'timeslot not found'));
-      response.json(timeslot);
-    })
-    .catch(err => next(createError(404, err.message)));
+  .then(timeslot => {
+    if(!timeslot) return next(createError(404, 'timeslot not found'));
+    response.json(timeslot);
+  })
+  .catch(err => next(createError(404, err.message)));
 });
 
 timeslotRouter.put('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, function(request, response, next) {
