@@ -45,6 +45,10 @@ lotRouter.put('/api/lot/:lotID', bearerAuth, jsonParser, function(request, respo
   .catch( err => next(createError(404, err.message)));
 });
 
-lotRouter.delete('/api/lot/:lotID', bearerAuth, function(request, repsonse, next) {
+lotRouter.delete('/api/lot/:lotID', bearerAuth, function(request, response, next) {
   debug('DELETE: /api/lot/:ID');
+
+  Lot.findByIdAndRemove(request.params.id)
+  .then( () => response.sendStatus(204))
+  .catch( err => next(createError(404, err.message)));
 });
