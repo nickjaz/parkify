@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "DEBUG='parkify*' mocha",
-    "start": "DEBUG='parkify*' node server.js"
+    "test-win": "SET DEBUG=parkify* && mocha",
+    "start": "DEBUG='parkify*' node server.js",
+    "start-win": "SET DEBUG=parkify* && node server.js"
   },
   "repository": {
     "type": "git",
