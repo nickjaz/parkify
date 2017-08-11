@@ -14,7 +14,7 @@ const userSchema = Schema({
   name: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  findHash: { type: String, unique: true }
+  tokenHash: { type: String, unique: true }
 });
 
 userSchema.methods.generatePasswordHash = function(password) {
@@ -49,9 +49,9 @@ userSchema.methods.generateTokenHash = function () {
     _generateTokenHash.call(this);
 
     function _generateTokenHash() {
-      this.findHash = crypto.randomBytes(32).toString('hex');
+      this.tokenHash = crypto.randomBytes(32).toString('hex');
       this.save()
-        .then(() => resolve(this.findHash))
+        .then(() => resolve(this.tokenHash))
         .catch(err => {
           if (tries > 3) return reject(err);
           tries++;
@@ -66,7 +66,7 @@ userSchema.methods.generateToken = function () {
 
   return new Promise((resolve, reject) => {
     this.generateTokenHash()
-      .then(findHash => resolve(jwt.sign({ token: findHash }, process.env.APP_SECRET)))
+      .then(tokenHash => resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET)))
       .catch(err => reject(err));
   });
 }
