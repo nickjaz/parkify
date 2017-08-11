@@ -33,8 +33,10 @@ spotRouter.put('/api/lot/:lotID/spot/:id', jsonParser, function(request, respons
   Spot.findByIdAndUpdate(request.params.id, request.body, { 'new': true })
   .then(spot => response.json(spot))
   .catch(err => {
-    if(err.name === 'ValidationError') return next(err);
-    next(createError(404, err.message));
+    if(err.name !== 'ValidationError') {
+      err = createError(404, err.message);
+    }
+    next(err);
   });
 });
 
@@ -42,6 +44,6 @@ spotRouter.delete('/api/lot/:lotID/spot/:id', function(request, response, next) 
   debug('DELETE: /api/lot/:lotID/spot/:id');
 
   Spot.findByIdAndRemove(request.params.id)
-  .then(() => response.status(204).send())
+  .then(() => response.sendStatus(204))
   .catch(err => next(createError(404, err.message)));
 });
