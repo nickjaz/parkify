@@ -26,7 +26,7 @@ authRouter.post('/api/signup', jsonParser, function(request, response, next) {
 authRouter.get('/api/signin', basicAuth, function(request, response, next) {
   debug('GET: /api/signin');
 
-  User.findOne({ name: request.auth.name})
+  User.findOne({ name: request.auth.name })
   .then( user => user.comparedPasswordHash(request.auth.password))
   .then( token => response.send(token))
   .catch(next);
