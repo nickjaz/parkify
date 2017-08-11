@@ -10,40 +10,40 @@ const Car = require('../model/car.js');
 
 const carRouter = module.exports = Router();
 
-carRouter.post('/api/car/:carID', bearerAuth, jsonParser, function(req, res, next) {
+carRouter.post('/api/car/:carID', bearerAuth, jsonParser, function(request, response, next) {
   debug('POST: /api/car/:carID');
 
-  if (Object.keys(req.body).length === 0) return next(createError(400, 'Bad Request'));
+  if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
-  req.body.userID = req.user._id;
+  request.body.userID = request.user._id;
 
-  new Car(req.body).save()
-  .then( car => res.json(car))
+  new Car(request.body).save()
+  .then( car => response.json(car))
   .catch(next);
 });
 
-carRouter.get('/api/car/:carID', bearerAuth, function(req, res, next) {
+carRouter.get('/api/car/:carID', bearerAuth, function(request, response, next) {
   debug('GET: /api/car/:carID');
 
-  Car.findById(req.params.id)
-  .then( car => res.json(car))
+  Car.findById(request.params.id)
+  .then( car => response.json(car))
   .catch(err => next(createError(404, err.message)));
 });
 
-carRouter.put('/api/car/:carID', bearerAuth, jsonParser, function(req, res, next) {
+carRouter.put('/api/car/:carID', bearerAuth, jsonParser, function(request, response, next) {
   debug('PUT: /api/car/:carID');
 
-  if (Object.keys(req.body).length === 0) return next(createError(400, 'Bad Request'));
+  if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
-  Car.findByIdAndUpdate(req.params.id, req.body, { new: true })
-  .then( contact => res.json(contact))
+  Car.findByIdAndUpdate(request.params.id, request.body, { new: true })
+  .then( contact => response.json(contact))
   .catch( err => next(createError(404, err.message)));
 });
 
-carRouter.delete('/api/car/:carID', bearerAuth, function(req, res, next) {
+carRouter.delete('/api/car/:carID', bearerAuth, function(request, response, next) {
   debug('DELETE: /api/car/:carID');
 
-  Car.findByIdAndRemove(req.params.id)
-  .then( () => res.status(204).send())
+  Car.findByIdAndRemove(request.params.id)
+  .then( () => response.sendStatus(204))
   .catch( err => next(createError(404, err.message)));
 });
