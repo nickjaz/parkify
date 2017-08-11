@@ -17,6 +17,7 @@ lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, n
 
   request.body.userID = request.user._id;
 
+<<<<<<< HEAD
   Lot.create(request.body)
   .then( lot => response.json(lot))
   .catch(next);
@@ -52,3 +53,9 @@ lotRouter.delete('/api/lot/:lotID', bearerAuth, function(request, response, next
   .then( () => response.sendStatus(204))
   .catch( err => next(createError(404, err.message)));
 });
+=======
+  new Lot(request.body).save()
+  .then( lot => response.json(lot))
+  .catch(next);
+});
+>>>>>>> staging
