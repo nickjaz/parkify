@@ -40,22 +40,22 @@ userSchema.methods.comparePasswordHash = function (password) {
   });
 }
 //generated a 32hexideicmal string (token)
-userSchema.methods.generateFindHash = function () {
-  debug('generateFindHash');
+userSchema.methods.generateTokenHash = function () {
+  debug('generateTokenHash');
 
   return new Promise((resolve, reject) => {
     let tries = 0;
 
-    _generateFindHash.call(this);
+    _generateTokenHash.call(this);
 
-    function _generateFindHash() {
+    function _generateTokenHash() {
       this.findHash = crypto.randomBytes(32).toString('hex');
       this.save()
         .then(() => resolve(this.findHash))
         .catch(err => {
           if (tries > 3) return reject(err);
           tries++;
-          _generateFindHash.call(this);
+          _generateTokenHash.call(this);
         });
     }
   });
@@ -65,7 +65,7 @@ userSchema.methods.generateToken = function () {
   debug('generateToken');
 
   return new Promise((resolve, reject) => {
-    this.generateFindHash()
+    this.generateTokenHash()
       .then(findHash => resolve(jwt.sign({ token: findHash }, process.env.APP_SECRET)))
       .catch(err => reject(err));
   });
