@@ -1,8 +1,8 @@
 'use strict';
 
 const jsonParser = require('body-parser').json();
-const debug = require('debug')('parkifiy:auth-router');
-const Router = require('../lib/basic-auth-middleware');
+const debug = require('debug')('parkify:auth-router');
+const Router = require('express').Router;
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/user.js');
 
@@ -19,7 +19,7 @@ authRouter.post('/api/signup', jsonParser, function(request, response, next) {
   user.generatePasswordHash(password)
   .then( user => user.save())
   .then( user => user.generateToken())
-  .then( token => resquest.send(token))
+  .then( token => request.send(token))
   .catch(next);
 });
 
@@ -28,6 +28,6 @@ authRouter.get('/api/signin', basicAuth, function(request, response, next) {
 
   User.findOne({ name: request.auth.name})
   .then( user => user.comparedPasswordHash(request.auth.password))
-  .then( token => resquest.send(token))
+  .then( token => request.send(token))
   .catch(next);
 });
