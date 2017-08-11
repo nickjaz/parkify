@@ -17,7 +17,7 @@ carRouter.post('/api/car/:carID', bearerAuth, jsonParser, function(request, resp
 
   request.body.userID = request.user._id;
 
-  new Car(request.body).save()
+  Car.create(request.body)
   .then( car => response.json(car))
   .catch(next);
 });
@@ -26,7 +26,10 @@ carRouter.get('/api/car/:carID', bearerAuth, function(request, response, next) {
   debug('GET: /api/car/:carID');
 
   Car.findById(request.params.id)
-  .then( car => response.json(car))
+  .then( car => {
+    if (!car) return next(createError(404, 'No Car Found'));
+    response.json(car);
+  })
   .catch(err => next(createError(404, err.message)));
 });
 
