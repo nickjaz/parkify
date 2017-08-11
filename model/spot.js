@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const spotSchema = Schema({
   name: { type: String, required: true },
   description: { type: String },
-  userID: { type: Schema.Types.ObjectId, required: true },
+  timeslots: [{ type: Schema.Types.ObjectId, ref: 'timeslot' }],
   lotID: { type: Schema.Types.ObjectId, required: true }
 });
 
