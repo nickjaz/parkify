@@ -12,10 +12,12 @@
     "mocha": true,
     "jasmine": true
   },
-  "ecmaFeatures": {
-    "modules": true,
-    "experimentalObjectRestSpread": true,
-    "impliedStrict": true
+  "parserOptions": {
+    "ecmaFeatures": {
+      "modules": true,
+      "experimentalObjectRestSpread": true,
+      "impliedStrict": true
+    }
   },
   "extends": "eslint:recommended"
 }
