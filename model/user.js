@@ -11,7 +11,7 @@ const debug = require('debug')('parkify:user');
 const Schema = mongoose.Schema;
 
 const userSchema = Schema({
-  username: { type: String, required: true, unique: true },
+  name: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   findHash: { type: String, unique: true }
