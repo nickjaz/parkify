@@ -46,7 +46,7 @@ userSchema.methods.generateTokenHash = function () {
   return new Promise((resolve, reject) => {
     let tries = 0;
 
-    _generateTokenHash.call(this);
+    _generateTokenHash.call(this); 
 
     function _generateTokenHash() {
       this.findHash = crypto.randomBytes(32).toString('hex');
