@@ -27,7 +27,7 @@ lotRouter.get('/api/lot/:lotID', bearerAuth, function(request, response, next) {
 
   Lot.findById(request.params.id)
   .then( lot => {
-    if (!lot) return next(createError(404, 'No Lot Found'));
+    if (!lot) return next(createError(404, 'Lot Not Found'));
     response.json(lot);
   })
   .catch(err => next(createError(404, err.message)));

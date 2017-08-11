@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "DEBUG='parkify*' mocha",
+    "test": "DEBUG='parkify*' mocha --recursive",
     "test-win": "SET DEBUG=parkify* && mocha",
     "start": "DEBUG='parkify*' node server.js",
     "start-win": "SET DEBUG=parkify* && node server.js",
