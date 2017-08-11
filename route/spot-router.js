@@ -21,11 +21,11 @@ spotRouter.get('/api/lot/:lotID/spot/:id', jsonParser, function(request, respons
   debug('GET: /api/lot/:lotID/spot/:id');
 
   Spot.findById(request.params.id)
-    .then(spot => {
-      if(!spot) return next(createError(404, 'spot not found'));
-      response.json(spot);    
-    })
-    .catch(err => next(createError(404, err.message)));
+  .then(spot => {
+    if(!spot) return next(createError(404, 'spot not found'));
+    response.json(spot);    
+  })
+  .catch(err => next(createError(404, err.message)));
 });
 
 spotRouter.put('/api/lot/:lotID/spot/:id', jsonParser, function(request, response, next) {
