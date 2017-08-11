@@ -11,20 +11,19 @@ const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const lotRouter = module.exports = Router();
 
 lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, next) {
-  debug('POST: /api/band');
+  debug('POST: /api/lot');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
   request.body.userID = request.user._id;
 
-<<<<<<< HEAD
   Lot.create(request.body)
   .then( lot => response.json(lot))
   .catch(next);
 });
 
 lotRouter.get('/api/lot/:lotID', bearerAuth, function(request, response, next) {
-  debug('PUT: api/lot/:lotID');
+  debug('GET: api/lot/:lotID');
 
   if (Object.keys(request.body).length === 0) return next (createError(400, 'Bad Request'));
 
@@ -53,9 +52,3 @@ lotRouter.delete('/api/lot/:lotID', bearerAuth, function(request, response, next
   .then( () => response.sendStatus(204))
   .catch( err => next(createError(404, err.message)));
 });
-=======
-  new Lot(request.body).save()
-  .then( lot => response.json(lot))
-  .catch(next);
-});
->>>>>>> staging
