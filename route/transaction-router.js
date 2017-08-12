@@ -15,7 +15,8 @@ transactionRouter.post('/api/transaction', bearerAuth, jsonParser, transactionPa
 
   Transaction.create(request.body)
   .then(transaction => {
-    response.json(transaction);
+    response.set('Location', `/api/lot/${transaction._id}`);
+    response.sendStatus(201);
   })
   .catch(error => {
     error = createError(400, error.message);
