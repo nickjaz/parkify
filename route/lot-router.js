@@ -18,7 +18,10 @@ lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, n
   request.body.userID = request.user._id;
 
   Lot.create(request.body)
-  .then( lot => response.json(lot))
+  .then( lot => {
+    response.set('Location', `/api/lot/${lot._id}`);
+    response.sendStatus(201);
+  })
   .catch(next);
 });
 

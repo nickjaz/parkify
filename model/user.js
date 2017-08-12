@@ -24,6 +24,7 @@ userSchema.methods.generatePasswordHash = function(password) {
     bcrypt.hash(password, 10, (err, hash) => {
       if (err) return reject(err);
       this.password = hash;
+      console.log('password:', this.password);
       resolve(this);
     });
   });
@@ -46,7 +47,7 @@ userSchema.methods.generateTokenHash = function () {
   return new Promise((resolve, reject) => {
     let tries = 0;
 
-    _generateTokenHash.call(this); 
+    _generateTokenHash.call(this);
 
     function _generateTokenHash() {
       this.tokenHash = crypto.randomBytes(32).toString('hex');
@@ -66,7 +67,9 @@ userSchema.methods.generateToken = function () {
 
   return new Promise((resolve, reject) => {
     this.generateTokenHash()
-    .then(tokenHash => resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET)))
+    .then(tokenHash => {
+      resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET));
+    })
     .catch(err => reject(err));
   });
 };

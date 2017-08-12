@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const debug = require('debug')('parkify:server');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 const authRouter = require('./route/auth-router.js');
 const carRouter = require('./route/car-router.js');
 const lotRouter = require('./route/lot-router.js');
@@ -12,8 +14,11 @@ const timeslotRouter = require('./route/timeslot-router.js');
 const transactionRouter = require('./route/transaction-router.js');
 const errorHandler = require('./lib/error-handler.js');
 
+dotenv.load();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+mongoose.connect(process.env.MONGODB_URI);
 
 app.use(cors());
 app.use(morgan('dev'));

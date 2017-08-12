@@ -23,44 +23,47 @@ const exampleLot = {
   address: 'example address'
 };
 
-describe('POST: /api/lot', function() {
-  before( done => {
-    new User(exampleUser)
-    .generatePasswordHash(exampleUser.password)
-    .then( user => user.save())
-    .then( user => {
-      this.tempUser = user;
-      return user.generateToken();
-    })
-    .then( token => {
-      this.tempToken = token;
-      done();
-    })
-    .catch(done);
-  });
-
-  after( done => {
-    Promise.all([
-      User.remove({}),
-      Lot.remove({})
-    ])
-    .then( () => done())
-    .catch(done);
-  });
-
-  describe('with a valid body', function() {
-    it('should return a lot', done => {
-      request.post(`${url}/api/lot`)
-      .send(exampleLot)
-      .set({
-        Authorization: `Bearer ${this.tempToken}`
+describe('Lot Post Route', function() {
+  describe('POST: /api/lot', function() {
+    before( done => {
+      new User(exampleUser)
+      .generatePasswordHash(exampleUser.password)
+      .then( user => {
+        return user.save();
       })
-      .end((error, response) => {
-        if(error) return done(error);
-        expect(response.status).to.equal(201);
-        expect(response.body.name).to.equal(exampleLot.name);
-        expect(response.body.description).to.equal(exampleLot.description);
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
         done();
+      })
+      .catch(done);
+    });
+
+    after( done => {
+      Promise.all([
+        User.remove({}),
+        Lot.remove({})
+      ])
+      .then( () => done())
+      .catch(done);
+    });
+
+    describe('valid request', () => {
+      it('should return 201 staus and expected property values', done => {
+        request.post(`${url}/api/lot`)
+        .send(exampleLot)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((error, response) => {
+          if(error) return done(error);
+          expect(response.status).to.equal(201);
+          expect(response.headers.location).to.be.a('string');
+          done();
+        });
       });
     });
   });
