@@ -38,8 +38,8 @@ describe('Auth Routes', function () {
       it('should return a token', done => {
         request.get(`${url}/api/signin`)
         .auth('exampleuser', '1234')
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
+        .end((err, result) => {
+          expect(result.status).to.equal(200);
           done();
         });
       });

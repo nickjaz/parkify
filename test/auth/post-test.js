@@ -27,10 +27,10 @@ describe('Auth Routes', function () {
       it('should return a token', done => {
         request.post(`${url}/api/signup`)
         .send(exampleUser)
-        .end((err, res) => {
+        .end((err, result) => {
           if (err) return done(err);
-          expect(res.status).to.equal(200);
-          expect(res.text).to.be.a('string');
+          expect(result.status).to.equal(200);
+          expect(result.text).to.be.a('string');
           done();
         });
       });
