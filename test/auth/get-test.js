@@ -25,7 +25,7 @@ describe('Auth Routes', function () {
           this.tempUser = user;
           done();
         });
-      }); 
+      });
       
       after(done => {
         User.remove({})
