@@ -2,8 +2,6 @@
 
 const expect = require('chai').expect;
 const request = require('superagent');
-const mongoose = require('mongoose');
-const Promise = require('bluebird');
 const User = require('../../model/user.js');
 
 require('../../server.js');
@@ -14,27 +12,26 @@ const exampleUser = {
   name: 'exampleuser',
   password: '1234',
   email: 'exampleuser@test.com'
-}
-
+};
 
 describe('Auth Routes', function () {
   describe('POST: /api/signup', function () {
     describe('with a valid body', function () {
       after(done => {
         User.remove({})
-          .then(() => done())
-          .catch(done);
+        .then(() => done())
+        .catch(done);
       });
-
+      
       it('should return a token', done => {
         request.post(`${url}/api/signup`)
-          .send(exampleUser)
-          .end((err, response) => {
-            if (err) return done(err);
-            expect(resonse.status).to.equal(200);
-            expect(resonse.text).to.be.a('string');
-            done();
-          });
+        .send(exampleUser)
+        .end((err, response) => {
+          if (err) return done(err);
+          expect(response.status).to.equal(200);
+          expect(response.text).to.be.a('string');
+          done();
+        });
       });
     });
   });

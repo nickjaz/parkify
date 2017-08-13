@@ -13,13 +13,15 @@ authRouter.post('/api/signup', jsonParser, function(request, response, next) {
 
   let password = request.body.password;
   delete request.body.password;
-
-  let user = User.create(request.body);
+  
+  let user = new User(request.body);
 
   user.generatePasswordHash(password)
   .then( user => user.save())
   .then( user => user.generateToken())
-  .then( token => response.send(token))
+  .then( token => {
+    response.send(token);
+  })
   .catch(next);
 });
 
