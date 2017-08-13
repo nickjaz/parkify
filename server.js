@@ -15,10 +15,10 @@ const transactionRouter = require('./route/transaction-router.js');
 const errorHandler = require('./lib/error-handler.js');
 
 dotenv.load();
-
-const app = express();
 const PORT = process.env.PORT || 3000;
 mongoose.connect(process.env.MONGODB_URI);
+
+const app = express();
 
 app.use(cors());
 app.use(morgan('dev'));
