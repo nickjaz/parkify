@@ -15,7 +15,8 @@ transactionRouter.post('/api/transaction', bearerAuth, jsonParser, transactionPa
 
   Transaction.create(request.body)
   .then(transaction => {
-    response.json(transaction);
+    response.set('Location', `/api/lot/${transaction._id}`);
+    response.sendStatus(201);
   })
   .catch(error => {
     error = createError(400, error.message);
@@ -32,8 +33,8 @@ transactionRouter.get('/api/transaction/:id', bearerAuth, function(request, resp
       let error = createError(404, 'Transaction not found.');
       return next(error);
     }
-
-    if (transaction.userID !== request.user._id) {
+    
+    if (!transaction.hostID.equals(request.user._id) && !transaction.guestID.equals(request.user._id)) {
       let error = createError(401, 'Not authorized to access this transaction.');
       return next(error);
     }

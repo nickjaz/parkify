@@ -9,6 +9,9 @@ const Promise = require('bluebird');
 const debug = require('debug')('parkify:user');
 
 const Schema = mongoose.Schema;
+mongoose.Promise = global.Promise;
+
+let User;
 
 const userSchema = Schema({
   name: { type: String, required: true, unique: true },
@@ -46,12 +49,14 @@ userSchema.methods.generateTokenHash = function () {
   return new Promise((resolve, reject) => {
     let tries = 0;
 
-    _generateTokenHash.call(this); 
+    _generateTokenHash.call(this);
 
     function _generateTokenHash() {
       this.tokenHash = crypto.randomBytes(32).toString('hex');
       this.save()
-      .then(() => resolve(this.tokenHash))
+      .then(() => {
+        resolve(this.tokenHash);
+      })
       .catch(err => {
         if (tries > 3) return reject(err);
         tries++;
@@ -66,9 +71,29 @@ userSchema.methods.generateToken = function () {
 
   return new Promise((resolve, reject) => {
     this.generateTokenHash()
-    .then(tokenHash => resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET)))
+    .then(tokenHash => {
+      resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET));
+    })
     .catch(err => reject(err));
   });
 };
 
-module.exports = mongoose.model('user', userSchema);
+userSchema.statics.createAuthenticated = function(userData, callback) {
+  debug('createAuthenticated');
+  new User(userData).generatePasswordHash(userData.password)
+  .then(user => user.save())
+  .then(user => {
+    user.generateToken()
+    .then(token => {
+      callback(null, user, token);
+      return Promise.resolve();
+    })
+    .catch(error => {
+      callback(error);
+      return Promise.resolve();
+    });
+  })
+  .catch(callback);
+};
+
+module.exports = User = mongoose.model('user', userSchema);
