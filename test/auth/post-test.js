@@ -29,7 +29,7 @@ describe('Auth Routes', function () {
       it('should return a token', done => {
         request.post(`${url}/api/signup`)
           .send(exampleUser)
-          .end((err, result) => {
+          .end((err, response) => {
             if (err) return done(err);
             expect(resonse.status).to.equal(200);
             expect(resonse.text).to.be.a('string');
