@@ -13,11 +13,7 @@ authRouter.post('/api/signup', jsonParser, function(request, response, next) {
 
   let password = request.body.password;
   delete request.body.password;
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> a22972f1c8ecada019db5abf71f52fda6981d5be
   let user = new User(request.body);
 
   user.generatePasswordHash(password)
