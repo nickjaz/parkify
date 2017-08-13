@@ -23,8 +23,8 @@ const exampleLot = {
   address: 'example address'
 };
 
-describe('Lot Post Route', function() {
-  describe('POST: /api/lot', function() {
+describe('Lot Delete Route', function() {
+  describe('DELETE: /api/lot/:id', function() {
     before( done => {
       new User(exampleUser)
       .generatePasswordHash(exampleUser.password)
@@ -42,6 +42,16 @@ describe('Lot Post Route', function() {
       .catch(done);
     });
 
+    before( done => {
+      exampleLot.userID = this.tempUser._id.toString();
+      new Lot(exampleLot).save()
+      .then( lot => {
+        this.tempLot = lot;
+        done();
+      })
+      .catch(done);
+    });
+
     after( done => {
       Promise.all([
         User.remove({}),
@@ -52,25 +62,22 @@ describe('Lot Post Route', function() {
     });
 
     describe('valid request', () => {
-      it('should return 201 staus and expected property values', done => {
-        request.post(`${url}/api/lot`)
-        .send(exampleLot)
+      it('should return 204 status code', done => {
+        request.delete(`${url}/api/lot/${this.tempLot._id}`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
         .end((error, response) => {
           if(error) return done(error);
-          expect(response.status).to.equal(201);
-          expect(response.headers.location).to.be.a('string');
+          expect(response.status).to.equal(204);
           done();
         });
       });
     });
 
-    describe('unauthorizated request', () => {
+    describe('unauthorizated id', () => {
       it('should return 401 status code', done => {
-        request.post(`${url}/api/lot`)
-        .send(exampleLot)
+        request.delete(`${url}/api/lot/${this.tempLot._id}`)
         .end((error, response) => {
           expect(response.status).to.equal(401);
           done();
@@ -78,15 +85,14 @@ describe('Lot Post Route', function() {
       });
     });
 
-    describe('invalid data', () => {
-      it('should return 400 status code', done => {
-        request.post(`${url}/api/lot`)
-        .send({ name: 'fake lot' })
+    describe('nonexistent id', () => {
+      it('should return 404 status code', done => {
+        request.delete(`${url}/api/lot/1234567890`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
         .end((error, response) => {
-          expect(response.status).to.equal(400);
+          expect(response.status).to.equal(404);
           done();
         });
       });
