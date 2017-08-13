@@ -78,7 +78,7 @@ describe('Lot Put Route', function() {
     });
 
     describe('nonexsistent id', () => {
-      it('should return 404', done => {
+      it('should return 404 status code', done => {
         request.put(`${url}/api/lot/1234567890`)
         .send({ name: 'new lot name' })
         .set({
@@ -86,6 +86,30 @@ describe('Lot Put Route', function() {
         })
         .end((error, response) => {
           expect(response.status).to.equal(404);
+          done();
+        });
+      });
+    });
+
+    describe('unauthorized request', () => {
+      it('should return 401 status code', done => {
+        request.put(`${url}/api/lot/${this.tempLot._id}`)
+        .send({ name: 'new lot name'})
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+
+    describe('invalid data', () => {
+      it('should return 400 status code', done => {
+        request.put(`${url}/api/lot/${this.tempLot._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(400);
           done();
         });
       });
