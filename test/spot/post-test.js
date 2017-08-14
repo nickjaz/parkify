@@ -51,39 +51,54 @@ describe('Spot Post Route', function() {
           done();
         })
         .catch(done);
-    });
+      });
 
-    after( done => {
-      Promise.all([
-        User.remove({}),
-        Lot.remove({}),
-        Spot.remove({})
-      ])
-      .then( () => done())
-      .catch(done);
-    });
+      after( done => {
+        Promise.all([
+          User.remove({}),
+          Lot.remove({}),
+          Spot.remove({})
+        ])
+        .then( () => done())
+        .catch(done);
+      });
 
-    describe('valid request', () => {
-      it('should return 201 status and expected property values', done => {
-        request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-        .send(exampleSpot)
-        .end((error, response) => {
-          if (error) return done(error);
-          expect(response.status).to.equal(201);
-          expect(response.body.name).to.equal(exampleSpot.name);
-          expect(response.body.lotID).to.equal(this.tempLot._id.toString());
-          done();
+      describe('valid request', () => {
+        it('should return 201 status and expected property values', done => {
+          request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
+          .send(exampleSpot)
+          .set({
+            Authorization: `Bearer ${this.tempToken}`
+          })
+          .end((error, response) => {
+            if (error) return done(error);
+            expect(response.status).to.equal(201);
+            expect(response.body.name).to.equal(exampleSpot.name);
+            expect(response.body.lotID).to.equal(this.tempLot._id.toString());
+            done();
+          });
         });
       });
-    });
 
-    describe('invalid data', () => {
-      it('should return 400 status code', done => {
-        request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-        .send({ name: 'fake spot' })
-        .end((error, response) => {
-          expect(response.status).to.equal(400);
-          done();
+      describe('unauthorized request', () => {
+        it('should return 401 status code', done => {
+          request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
+          .send(exampleSpot)
+          .end((error, response) => {
+            expect(response.status).to.equal(401);
+            done();
+          });
+        });
+      });
+
+      describe('invalid data', () => {
+        it('should return 400 status code', done => {
+          request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
+          .send({ name: 'fake spot' })
+          .end((error, response) => {
+            expect(response.status).to.equal(400);
+            done();
+          });
         });
       });
     });
