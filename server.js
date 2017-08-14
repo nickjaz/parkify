@@ -16,7 +16,9 @@ const errorHandler = require('./lib/error-handler.js');
 
 dotenv.load();
 const PORT = process.env.PORT || 3000;
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI, {
+  useMongoClient: true
+});
 
 const app = express();
 

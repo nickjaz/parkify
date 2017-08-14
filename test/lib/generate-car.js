@@ -17,4 +17,4 @@ let generateCar = function(userID) {
   return Car.create(testCarData);
 };
 
-
+module.exports = generateCar;
