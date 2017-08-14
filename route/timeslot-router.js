@@ -6,10 +6,11 @@ const debug = require('debug')('parkify:timeslot-router');
 const jsonParser = require('body-parser').json();
 const Spot = require('../model/spot.js');
 const Timeslot = require('../model/timeslot.js');
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const timeslotRouter = module.exports = new Router();
 
-timeslotRouter.post('/api/lot/:lotID/spot/:spotID/timeslot', jsonParser, function(request, response, next) {
+timeslotRouter.post('/api/lot/:lotID/spot/:spotID/timeslot', bearerAuth, jsonParser, function(request, response, next) {
   debug('POST: /api/lot/:lotID/spot/:spotID/timeslot');
 
   Spot.findByIdAndAddTimeslot(request.params.spotID, request.body)
@@ -17,7 +18,7 @@ timeslotRouter.post('/api/lot/:lotID/spot/:spotID/timeslot', jsonParser, functio
   .catch(next);
 });
 
-timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, function(request, response, next) {
+timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, function(request, response, next) {
   debug('GET: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
   Timeslot.findById(request.params.id)
@@ -28,7 +29,7 @@ timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, func
   .catch(err => next(createError(404, err.message)));
 });
 
-timeslotRouter.put('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, function(request, response, next) {
+timeslotRouter.put('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, jsonParser, function(request, response, next) {
   debug('PUT: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
   if(!request.body.name) return next(createError(400, response.message));
@@ -43,7 +44,7 @@ timeslotRouter.put('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, func
   });
 });
 
-timeslotRouter.delete('/api/lot/:lotID/spot/:spotID/timeslot/:id', function(request, response, next) {
+timeslotRouter.delete('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, function(request, response, next) {
   debug('DELETE: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
   Timeslot.findByIdAndRemove(request.params.id)
