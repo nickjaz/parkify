@@ -31,8 +31,8 @@ const exampleSpot = {
 };
 
 const exampleTimeslot = {
-  startTime: Date.now,
-  endTime: Date.now
+  startTime: Date.now(),
+  endTime: Date.now()
 };
 
 describe('Timeslot Post Route', function() {
