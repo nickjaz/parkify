@@ -10,8 +10,8 @@ const Car = require('../model/car.js');
 
 const carRouter = module.exports = Router();
 
-carRouter.post('/api/car', bearerAuth, jsonParser, function(request, response, next) {
-  debug('POST: /api/car');
+carRouter.post('/api/car/:carID', bearerAuth, jsonParser, function(request, response, next) {
+  debug('POST: /api/car/:carID');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
@@ -25,12 +25,12 @@ carRouter.post('/api/car', bearerAuth, jsonParser, function(request, response, n
 carRouter.get('/api/car/:carID', bearerAuth, function(request, response, next) {
   debug('GET: /api/car/:carID');
 
-  Car.findById(request.params.carID)
+  Car.findById(request.params.id)
   .then( car => {
     if (!car) return next(createError(404, 'No Car Found'));
     response.json(car);
   })
-  .catch( error => next(createError(404, error.message)));
+  .catch(err => next(createError(404, err.message)));
 });
 
 carRouter.put('/api/car/:carID', bearerAuth, jsonParser, function(request, response, next) {
@@ -38,15 +38,15 @@ carRouter.put('/api/car/:carID', bearerAuth, jsonParser, function(request, respo
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
-  Car.findByIdAndUpdate(request.params.carID, request.body, { new: true })
+  Car.findByIdAndUpdate(request.params.id, request.body, { new: true })
   .then( contact => response.json(contact))
-  .catch( error => next(createError(404, error.message)));
+  .catch( err => next(createError(404, err.message)));
 });
 
 carRouter.delete('/api/car/:carID', bearerAuth, function(request, response, next) {
   debug('DELETE: /api/car/:carID');
 
-  Car.findByIdAndRemove(request.params.carID)
+  Car.findByIdAndRemove(request.params.id)
   .then( () => response.sendStatus(204))
-  .catch( error => next(createError(404, error.message)));
+  .catch( err => next(createError(404, err.message)));
 });
