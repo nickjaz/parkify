@@ -45,7 +45,8 @@ describe('Spot Post Route', function() {
         this.tempToken = token;
       })
       .then( () => {
-        new Lot(exampleLot)
+        exampleLot.userID = this.tempUser._id.toString();
+        new Lot(exampleLot).save()
         .then( lot => {
           this.tempLot = lot;
           done();
