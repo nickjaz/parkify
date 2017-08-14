@@ -26,8 +26,8 @@ describe('Auth Routes', function () {
       it('should return a token', done => {
         request.post(`${url}/api/signup`)
         .send(exampleUser)
-        .end((err, response) => {
-          if (err) return done(err);
+        .end((error, response) => {
+          if (error) return done(error);
           expect(response.status).to.equal(200);
           expect(response.text).to.be.a('string');
           done();
