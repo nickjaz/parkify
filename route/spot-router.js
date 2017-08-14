@@ -23,7 +23,7 @@ spotRouter.get('/api/lot/:lotID/spot/:id', jsonParser, function(request, respons
   Spot.findById(request.params.id)
   .then(spot => {
     if(!spot) return next(createError(404, 'spot not found'));
-    response.json(spot);
+    response.json(spot);    
   })
   .catch(err => next(createError(404, err.message)));
 });
