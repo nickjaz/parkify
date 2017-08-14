@@ -73,7 +73,8 @@ describe('Timeslot Delete Route', function () {
         Promise.all([
           User.remove({}),
           Lot.remove({}),
-          Spot.remove({})
+          Spot.remove({}),
+          Timeslot.remove({})
         ])
           .then(() => done())
           .catch(done);
