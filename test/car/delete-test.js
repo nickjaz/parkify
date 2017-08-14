@@ -12,7 +12,7 @@ const url = `http://localhost:${process.env.PORT}`;
 
 require('../../server.js');
 
-describe('GET: /api/car/:id', function() {
+describe('DELETE: /api/car/:id', function() {
   beforeEach( done => {
     generateUser()
     .then( data => {
@@ -37,47 +37,43 @@ describe('GET: /api/car/:id', function() {
     .catch(done);
   });
 
-  describe('Valid Request and Valid Token', () => {
-    it('should return a 200', done => {
-      request.get(`${url}/api/car/${this.car._id}`)
-      .set({ Authorization: `Bearer ${this.userToken}` })
+  describe('Valid Request', () => {
+    it('should return a 204', done => {
+      request.delete(`${url}/api/car/${this.car._id}`)
+      .set({
+        Authorization: `Bearer ${this.userToken}`
+      })
       .end((error, response) => {
         if (error) return done(error);
-        expect(response.status).equal(200);
-        expect(response.body.make).equal(this.car.make);
-        expect(response.body.model).equal(this.car.model);
-        expect(response.body.color).equal(this.car.color);
-        expect(response.body.licensePlate).equal(this.car.licensePlate);
-        expect(response.body.userID).equal(this.car.userID.toString());
+        expect(response.status).equal(204);
         done();
       });
     });
   });
 
-  describe('Invalid Token', () => {
+  describe('Unauthorized Request', () => {
     it('should return a 401', done => {
-      request.get(`${url}/api/car/${this.car._id}`)
-      .set({ Authorization: '' })
+      request.delete(`${url}/api/car/${this.car._id}`)
+      .set({
+        Authorization: ''
+      })
       .end((error, response) => {
         expect(response.status).equal(401);
-        expect(error.name).equal('Error');
-        expect(error.message).equal('Unauthorized');
         done();
       });
     });
   });
 
-  describe('Invalid Request', () => {
+  describe('Nonexistent Id', () => {
     it('should return a 404', done => {
-      request.get(`${url}/api/car/123456`)
-      .set({ Authorization: `Bearer ${this.userToken}` })
+      request.delete(`${url}/api/car/123456`)
+      .set({
+        Authorization: `Bearer ${this.userToken}`
+      })
       .end((error, response) => {
         expect(response.status).equal(404);
-        expect(error.name).equal('Error');
-        expect(error.message).equal('Not Found');
         done();
       });
     });
   });
 });
-
