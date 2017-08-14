@@ -21,9 +21,10 @@ spotRouter.get('/api/lot/:lotID/spot/:id', jsonParser, function(request, respons
   debug('GET: /api/lot/:lotID/spot/:id');
 
   Spot.findById(request.params.id)
+    .populate('timeslots')
     .then(spot => {
       if(!spot) return next(createError(404, 'spot not found'));
-      response.json(spot);    
+      response.json(spot);
     })
     .catch(err => next(createError(404, err.message)));
 });
