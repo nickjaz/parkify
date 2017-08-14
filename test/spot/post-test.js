@@ -8,7 +8,7 @@ const Spot = require('../../model/spot.js');
 const Lot = require('../../model/lot.js');
 const User = require('../../model/user.js');
 
-require('../server.js');
+require('../../server.js');
 
 const url = `http://localhost:${process.env.PORT}`;
 
