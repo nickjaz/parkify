@@ -25,18 +25,18 @@ lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, n
   .catch(next);
 });
 
-lotRouter.get('/api/lot/:lotID', bearerAuth, function(request, response, next) {
+lotRouter.get('/api/lot/:id', bearerAuth, function(request, response, next) {
   debug('GET: api/lot/:lotID');
 
   Lot.findById(request.params.id)
   .then( lot => {
-    if (!lot) return next(createError(404, 'No Lot Found'));
+    if (!lot) return next(createError(404, 'Lot Not Found'));
     response.json(lot);
   })
   .catch(err => next(createError(404, err.message)));
 });
 
-lotRouter.put('/api/lot/:lotID', bearerAuth, jsonParser, function(request, response, next) {
+lotRouter.put('/api/lot/:id', bearerAuth, jsonParser, function(request, response, next) {
   debug('PUT: api/lot/:lotID');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
@@ -46,7 +46,7 @@ lotRouter.put('/api/lot/:lotID', bearerAuth, jsonParser, function(request, respo
   .catch( err => next(createError(404, err.message)));
 });
 
-lotRouter.delete('/api/lot/:lotID', bearerAuth, function(request, response, next) {
+lotRouter.delete('/api/lot/:id', bearerAuth, function(request, response, next) {
   debug('DELETE: /api/lot/:ID');
 
   Lot.findByIdAndRemove(request.params.id)
