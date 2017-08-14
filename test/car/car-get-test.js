@@ -37,7 +37,7 @@ describe('GET: /api/car/:id', function() {
     .catch(done);
   });
 
-  describe('Valid Car and Valid Token', () => {
+  describe('Valid Request and Valid Token', () => {
     it('should return a 200', done => {
       request.get(`${url}/api/car/${this.car._id}`)
       .set({ Authorization: `Bearer ${this.userToken}` })
@@ -67,7 +67,7 @@ describe('GET: /api/car/:id', function() {
     });
   });
 
-  describe('Invalid Car', () => {
+  describe('Invalid Request', () => {
     it('should return a 404', done => {
       request.get(`${url}/api/car/123456`)
       .set({ Authorization: `Bearer ${this.userToken}` })

@@ -37,7 +37,7 @@ describe('POST: /api/car', function() {
     .catch(done);
   });
 
-  describe('Valid Body and Valid Token', () => {
+  describe('Valid Request Body and Valid Token', () => {
     it('should return a 200', done => {
       request.post(`${url}/api/car`)
       .set({ Authorization: `Bearer ${this.userToken}` })
