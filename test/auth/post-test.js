@@ -22,7 +22,7 @@ describe('Auth Routes', function () {
         .then(() => done())
         .catch(done);
       });
-      
+
       it('should return a token', done => {
         request.post(`${url}/api/signup`)
         .send(exampleUser)
