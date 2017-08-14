@@ -13,7 +13,10 @@ spotRouter.post('/api/lot/:lotID/spot', jsonParser, function(request, response, 
   debug('POST: /api/lot/:lotID/spot');
 
   Lot.findByIdAndAddSpot(request.params.lotID, request.body)
-  .then(spot => response.json(spot))
+  .then(spot => {
+    response.sendStatus(201);
+    response.json(spot);
+  })
   .catch(next);
 });
 
