@@ -82,7 +82,7 @@ describe('Timeslot Delete Route', function () {
 
       describe('valid request', () => {
         it('should return 204 status code', done => {
-          request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot`)
+          request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}`)
             .send(exampleTimeslot)
             .set({
               Authorization: `Bearer ${this.tempToken}`
