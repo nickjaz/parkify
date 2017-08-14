@@ -36,7 +36,7 @@ describe('Auth Routes', function () {
       it('should return a token', done => {
         request.get(`${url}/api/signin`)
         .auth('exampleuser', '1234')
-        .end((err, response) => {
+        .end((error, response) => {
           expect(response.status).to.equal(200);
           done();
         });
