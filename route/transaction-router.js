@@ -10,7 +10,7 @@ const Transaction = require('../model/transaction.js');
 
 const transactionRouter = new Router();
 
-transactionRouter.post('/api/transaction', bearerAuth, jsonParser, transactionParser, function(request, response, next) {
+transactionRouter.post('/api/transaction', bearerAuth, jsonParser, transactionParser, function(request, response) {
   debug('POST: /api/transaction');
 
   Transaction.create(request.body)
