@@ -8,6 +8,7 @@ const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const Spot = require('../model/spot.js');
 const Timeslot = require('../model/timeslot.js');
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const timeslotRouter = module.exports = new Router();
 
@@ -19,7 +20,7 @@ timeslotRouter.post('/api/lot/:lotID/spot/:spotID/timeslot', bearerAuth, jsonPar
   .catch(next);
 });
 
-timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, jsonParser, function(request, response, next) {
+timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, function(request, response, next) {
   debug('GET: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
   Timeslot.findById(request.params.id)
@@ -45,7 +46,7 @@ timeslotRouter.put('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, json
   });
 });
 
-timeslotRouter.delete('/api/lot/:lotID/spot/:spotID/timeslot/:id', function(request, response, next) {
+timeslotRouter.delete('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, function(request, response, next) {
   debug('DELETE: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
   Timeslot.findByIdAndRemove(request.params.id)
