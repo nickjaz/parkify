@@ -109,7 +109,6 @@ describe('Timeslot Delete Route', function() {
       describe('unauthorized request', () => {
         it('should return 401 status code', done => {
           request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}}`)
-            .send(exampleSpot)
             .end((error, response) => {
               expect(response.status).to.equal(401);
               done();
