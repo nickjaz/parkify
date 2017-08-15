@@ -26,13 +26,13 @@ describe('Auth Routes', function () {
           done();
         });
       });
-      
+
       after(done => {
         User.remove({})
         .then(() => done())
         .catch(done);
       });
-      
+
       it('should return a token', done => {
         request.get(`${url}/api/signin`)
         .auth('exampleuser', '1234')

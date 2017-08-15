@@ -4,7 +4,6 @@ const Router = require('express').Router;
 const createError = require('http-errors');
 const debug = require('debug')('parkify:timeslot-router');
 const jsonParser = require('body-parser').json();
-const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const Spot = require('../model/spot.js');
 const Timeslot = require('../model/timeslot.js');
@@ -34,7 +33,7 @@ timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, func
 timeslotRouter.put('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, jsonParser, function(request, response, next) {
   debug('PUT: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
-  if(!request.body.name) return next(createError(400, response.message));
+  if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
   Timeslot.findByIdAndUpdate(request.params.id, request.body, { 'new': true })
   .then(spot => response.json(spot))
