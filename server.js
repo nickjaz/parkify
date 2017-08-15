@@ -3,21 +3,34 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const debug = require('debug')('parkify:server');
-
+const authRouter = require('./route/auth-router.js');
 const carRouter = require('./route/car-router.js');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
+const lotRouter = require('./route/lot-router.js');
+const spotRouter = require('./route/spot-router.js');
+const timeslotRouter = require('./route/timeslot-router.js');
 const transactionRouter = require('./route/transaction-router.js');
 const errorHandler = require('./lib/error-handler.js');
 
+dotenv.load();
+const PORT = process.env.PORT || 3000;
+mongoose.connect(process.env.MONGODB_URI, {
+  useMongoClient: true
+});
+
+const app = express();
+
 app.use(cors());
 app.use(morgan('dev'));
+app.use(authRouter);
+app.use(carRouter);
+app.use(lotRouter);
+app.use(spotRouter);
+app.use(timeslotRouter);
 app.use(transactionRouter);
 app.use(errorHandler);
-
-app.use(carRouter);
 
 app.listen(PORT, () => {
   debug(`listening on: ${PORT}`);

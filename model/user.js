@@ -9,6 +9,9 @@ const Promise = require('bluebird');
 const debug = require('debug')('parkify:user');
 
 const Schema = mongoose.Schema;
+mongoose.Promise = global.Promise;
+
+let User;
 
 const userSchema = Schema({
   name: { type: String, required: true, unique: true },
@@ -27,7 +30,7 @@ userSchema.methods.generatePasswordHash = function(password) {
       resolve(this);
     });
   });
-}
+};
 
 userSchema.methods.comparePasswordHash = function (password) {
   debug('comparePasswordHash');
@@ -38,37 +41,59 @@ userSchema.methods.comparePasswordHash = function (password) {
       resolve(this);
     });
   });
-}
-//generated a 32hexideicmal string (token)
+};
+
 userSchema.methods.generateTokenHash = function () {
   debug('generateTokenHash');
 
   return new Promise((resolve, reject) => {
     let tries = 0;
 
-    _generateTokenHash.call(this); 
+    _generateTokenHash.call(this);
 
     function _generateTokenHash() {
       this.tokenHash = crypto.randomBytes(32).toString('hex');
       this.save()
-        .then(() => resolve(this.tokenHash))
-        .catch(err => {
-          if (tries > 3) return reject(err);
-          tries++;
-          _generateTokenHash.call(this);
-        });
+      .then(() => {
+        resolve(this.tokenHash);
+      })
+      .catch(err => {
+        if (tries > 3) return reject(err);
+        tries++;
+        _generateTokenHash.call(this);
+      });
     }
   });
-}
-//two factor auth
+};
+
 userSchema.methods.generateToken = function () {
   debug('generateToken');
 
   return new Promise((resolve, reject) => {
     this.generateTokenHash()
-      .then(tokenHash => resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET)))
-      .catch(err => reject(err));
+    .then(tokenHash => {
+      resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET));
+    })
+    .catch(err => reject(err));
   });
-}
+};
 
-module.exports = mongoose.model('user', userSchema);
+userSchema.statics.createAuthenticated = function(userData, callback) {
+  debug('createAuthenticated');
+  new User(userData).generatePasswordHash(userData.password)
+  .then(user => user.save())
+  .then(user => {
+    user.generateToken()
+    .then(token => {
+      callback(null, user, token);
+      return Promise.resolve();
+    })
+    .catch(error => {
+      callback(error);
+      return Promise.resolve();
+    });
+  })
+  .catch(callback);
+};
+
+module.exports = User = mongoose.model('user', userSchema);
