@@ -36,7 +36,7 @@ const exampleTimeslot = {
 };
 
 describe('Timeslot Delete Route', function () {
-  describe('DELETE: /api/lot/:lotID/spot/:spotID', function () {
+  describe('DELETE: /api/lot/:lotID/spot/:spotID/timeslot/:id', function () {
     before(done => {
       new User(exampleUser)
         .generatePasswordHash(exampleUser.password)
@@ -109,7 +109,7 @@ describe('Timeslot Delete Route', function () {
 
       describe('unauthorized request', () => {
         it('should return 401 status code', done => {
-          request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}`)
+          request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}}`)
             .send(exampleSpot)
             .end((error, response) => {
               expect(response.status).to.equal(401);
