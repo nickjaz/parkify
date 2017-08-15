@@ -12,6 +12,8 @@ const feedbackRouter = module.exports = Router();
 feedbackRouter.post('/api/feedback', bearerAuth, jsonParser, function(request, response, next) {
   debug('POST: /api/feedback');
 
+  if(Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
+
   Feedback.create(request.body)
   .then(feedback => {
     response.json(feedback);
@@ -22,7 +24,7 @@ feedbackRouter.post('/api/feedback', bearerAuth, jsonParser, function(request, r
   });
 });
 
-feedbackRouter.get('/api/feedback/:id', bearerAuth, function(request, response, next) {
+feedbackRouter.get('/api/feedback/:id', function(request, response, next) {
   debug('GET: /api/feedback/:id');
 
   Feedback.findById(request.params.id)
@@ -35,6 +37,8 @@ feedbackRouter.get('/api/feedback/:id', bearerAuth, function(request, response, 
 
 feedbackRouter.put('/api/feedback/:id', bearerAuth, jsonParser, function(request, response, next) {
   debug('PUT: /api/feedback/:id');
+
+  if(Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
   Feedback.findByIdAndUpdate(request.params.id, request.body, { new: true })
   .then( feedback => response.json(feedback))
