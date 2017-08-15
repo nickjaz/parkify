@@ -155,15 +155,4 @@ describe('Auth Routes', function () {
       });
     });
   });
-  describe('Get /', function () {
-    describe('/ error', function () {
-      it('should return a message', done => {
-        request.get(`${url}/`)
-          .end((err, response) => {
-            expect(response.text).to.equal('This is working!!');
-            done();
-          });
-      });
-    });
-  });
 });
