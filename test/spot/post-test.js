@@ -50,7 +50,6 @@ describe('Spot Post Route', function() {
     });
 
     before( done => {
-      console.log(exampleLot);
       new Lot(exampleLot).save()
       .then( lot => {
         this.tempLot = lot;
@@ -79,37 +78,37 @@ describe('Spot Post Route', function() {
         .end((error, response) => {
           if (error) return done(error);
           expect(response.status).to.equal(201);
-          // expect(response.body.name).to.equal(exampleSpot.name);
-          // expect(response.body.description).to.equal(exampleSpot.description);
-          // expect(response.body.lotID).to.equal(this.tempLot._id.toString());
+          expect(response.body.name).to.equal(exampleSpot.name);
+          expect(response.body.description).to.equal(exampleSpot.description);
+          expect(response.body.lotID).to.equal(this.tempLot._id.toString());
           done();
         });
       });
     });
 
-    // describe('unauthorized request', () => {
-    //   it('should return 401 status code', done => {
-    //     request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-    //     .send(exampleSpot)
-    //     .end((error, response) => {
-    //       expect(response.status).to.equal(401);
-    //       done();
-    //     });
-    //   });
-    // });
-    //
-    // describe('invalid data', () => {
-    //   it('should return 400 status code', done => {
-    //     request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-    //     .send({})
-    //     .set({
-    //       Authorization: `Bearer ${this.tempToken}`
-    //     })
-    //     .end((error, response) => {
-    //       expect(response.status).to.equal(400);
-    //       done();
-    //     });
-    //   });
-    // });
+    describe('unauthorized request', () => {
+      it('should return 401 status code', done => {
+        request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
+        .send(exampleSpot)
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+
+    describe('invalid data', () => {
+      it('should return 400 status code', done => {
+        request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
+        .send({})
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(400);
+          done();
+        });
+      });
+    });
   });
 });
