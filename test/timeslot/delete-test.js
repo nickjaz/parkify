@@ -39,81 +39,93 @@ describe('Timeslot Delete Route', function() {
   describe('DELETE: /api/lot/:lotID/spot/:spotID/timeslot/:id', function () {
     before(done => {
       new User(exampleUser)
-        .generatePasswordHash(exampleUser.password)
-        .then( user => {
-          return user.save();
-        })
-        .then( user => {
-          this.tempUser = user;
-          return user.generateToken();
-        })
-        .then( token => {
-          this.tempToken = token;
-        })
-        .then(() => {
-          exampleSlot.lotID = this.tempSlot._id.toString();
-          new Lot(exampleLot).save()
-            .then( lot => {
-              this.tempLot = lot;
-              done();
-            })
-            .catch(done);
-        });
+      .generatePasswordHash(exampleUser.password)
+      .then( user => {
+        return user.save();
+       })
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+      })
+      .catch(done);
+    });
 
-      before(done => {
-        Timeslot.create(exampleTimeslot)
-        .then(timeSlot => {
-          this.tempTimeslot = timeslot;
+    before(done => {
+      exampleLot.userID = this.tempUser._id.toString();
+      Lot.create(exampleLot)
+      .then(lot => {
+        this.tempLot = lot;
+        done();
+      })
+      .catch(done);
+    });
+
+    before(done => {
+      exampleSpot.userID = this.tempLot._id.toString();
+      Lot.create(exampleSpot)
+      .then(spot => {
+        this.tempSpot = spot;
+        done();
+      })
+      .catch(done);
+    });
+    
+    before(done => {
+      Timeslot.create(exampleTimeslot)
+      .then(timeSlot => {
+        this.tempTimeslot = timeslot;
+        done();
+      })
+      .catch(done);
+    });
+    
+    after(done => {
+      Promise.all([
+        User.remove({}),
+        Lot.remove({}),
+        Spot.remove({}),
+      ])
+      .then(() => done())
+      .catch(done);
+    });
+    
+    describe('valid request', () => {
+      it('should return 204 status code', done => {
+        request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((error, response) => {
+          if (error) return done(error);
+          expect(response.status).to.equal(204);
           done();
-        })
-        .catch(done);
-      });
-
-      after(done => {
-        Promise.all([
-          User.remove({}),
-          Lot.remove({}),
-          Spot.remove({}),
-        ])
-          .then(() => done())
-          .catch(done);
-      });
-
-      describe('valid request', () => {
-        it('should return 204 status code', done => {
-          request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}`)
-            .set({
-              Authorization: `Bearer ${this.tempToken}`
-            })
-            .end((error, response) => {
-              if (error) return done(error);
-              expect(response.status).to.equal(204);
-              done();
-            });
         });
       });
-
-      describe('nonexistent id', () => {
-        it('should return a 404 status code', done => {
-          request.delete(`${url}/api/lot/${this.tempLot._id}/timeslot/1234567890`)
-            .set({
-              Authorization: `Bearer ${this.tempToken}`
-            })
-            .end((error, response) => {
-              expect(response.status).to.equal(404);
-              done();
-            });
-        });
+    });
+  });
+  
+  describe('nonexistent id', () => {
+    it('should return a 404 status code', done => {
+      request.delete(`${url}/api/lot/${this.tempLot._id}/timeslot/1234567890`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
+        done();
       });
-
-      describe('unauthorized request', () => {
-        it('should return 401 status code', done => {
-          request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}}`)
-            .end((error, response) => {
-              expect(response.status).to.equal(401);
-              done();
-            });
-        });
+    });
+  });
+  
+  describe('unauthorized request', () => {
+    it('should return 401 status code', done => {
+      request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}}`)
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        done();
       });
     });
   });
