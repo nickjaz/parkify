@@ -11,7 +11,7 @@ const debug = require('debug')('parkify:user');
 const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 
-let User;
+let User; 
 
 const userSchema = Schema({
   name: { type: String, required: true, unique: true },
