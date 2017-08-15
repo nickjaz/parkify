@@ -29,13 +29,13 @@ describe('Auth Routes', function () {
         })
         .catch(done);
       });
-      
+
       after(done => {
         User.remove({})
         .then(() => done())
         .catch(done);
       });
-      
+
       it('should return a token', done => {
         request.get(`${url}/api/signin`)
         .auth('exampleuser', '1234')
@@ -57,7 +57,7 @@ describe('Auth Routes', function () {
         })
         .catch(done);
       });
-      
+
       after(done => {
         User.remove({})
         .then(() => done())
@@ -102,8 +102,13 @@ describe('Auth Routes', function () {
     });
     describe('no name in auth', function () {
       before(done => {
-        let user = new User(exampleUser);
-        user.generatePasswordHash(exampleUser.password)
+        let noNameUser = {
+          name: 'fake',
+          password: '1234',
+          email: 'exampleuser@test.com'
+        };
+        let user = new User(noNameUser);
+        user.generatePasswordHash(noNameUser.password)
         .then(user => user.save())
         .then(user => {
           this.tempUser = user;
