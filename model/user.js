@@ -32,8 +32,8 @@ userSchema.methods.generatePasswordHash = function(password) {
 userSchema.methods.comparePasswordHash = function (password) {
   debug('comparePasswordHash');
   return new Promise((resolve, reject) => {
-    bcrypt.compare(password, this.password, (err, valid) => {
-      if (err) return reject(err);
+    bcrypt.compare(password, this.password, (error, valid) => {
+      if (error) return reject(error);
       if (!valid) return reject(createError(401, 'invalid password'));
       resolve(this);
     });
@@ -51,9 +51,9 @@ userSchema.methods.generateTokenHash = function () {
     function _generateTokenHash() {
       this.tokenHash = crypto.randomBytes(32).toString('hex');
       this.save()
-      .then(() => resolve(this.tokenHash))
-      .catch(err => {
-        if (tries > 3) return reject(err);
+      .then( () => resolve(this.tokenHash))
+      .catch(error => {
+        if (tries > 3) return reject(error);
         tries++;
         _generateTokenHash.call(this);
       });
@@ -66,8 +66,8 @@ userSchema.methods.generateToken = function () {
 
   return new Promise((resolve, reject) => {
     this.generateTokenHash()
-    .then(tokenHash => resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET)))
-    .catch(err => reject(err));
+    .then( tokenHash => resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET)))
+    .catch(error => reject(error));
   });
 };
 

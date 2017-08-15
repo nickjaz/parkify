@@ -31,3 +31,10 @@ authRouter.get('/api/signin', basicAuth, function(request, response, next) {
   .then( token => response.send(token))
   .catch(next);
 });
+
+authRouter.get('/', function(request, response, next) {
+  debug('GET: /');
+
+  response.send('YEAH BABY, WE WORKING');
+  next();
+});
