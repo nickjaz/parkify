@@ -6,6 +6,7 @@ const Promise = require('bluebird');
 
 const generateUser = require('../lib/generate-user.js');
 const generateLot = require('../lib/generate-lot.js');
+const generateSpot = require('../lib/generate-spot.js');
 
 const Spot = require('../../model/spot.js');
 const Lot = require('../../model/lot.js');
@@ -32,12 +33,8 @@ describe('Spot Delete Route', function() {
       .then( tempLot => {
         this.lot = tempLot;
         this.lot.userID = tempLot.userID;
-        done();
       })
-      .catch(done);
-    });
-    before( done => {
-      new Spot(exampleSpot).save()
+      .then( () => generateSpot(this.lot.userID))
       .then( spot => {
         this.tempSpot = spot;
         done();
@@ -57,7 +54,7 @@ describe('Spot Delete Route', function() {
 
     describe('valid request', () => {
       it('should return 204 status code', done => {
-        request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}`)
+        request.delete(`${url}/api/lot/${this.lot._id}/spot/${this.tempSpot._id}`)
         .set({
           Authorization: `Bearer ${this.hostToken}`
         })
@@ -71,11 +68,12 @@ describe('Spot Delete Route', function() {
 
     describe('nonexistent id', () => {
       it('should return a 404 status code', done => {
-        request.delete(`${url}/api/lot/${this.tempLot._id}/spot/1234567890`)
+        request.delete(`${url}/api/lot/${this.lot._id}/spot/1234567890`)
         .set({
           Authorization: `Bearer ${this.hostToken}`
         })
         .end((error, response) => {
+          console.log('****error:', error);
           expect(response.status).to.equal(404);
           done();
         });
@@ -84,7 +82,7 @@ describe('Spot Delete Route', function() {
 
     describe('unauthorized request', () => {
       it('should return 401 status code', done => {
-        request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}`)
+        request.delete(`${url}/api/lot/${this.lot._id}/spot/${this.tempSpot._id}`)
         .send(exampleSpot)
         .end((error, response) => {
           expect(response.status).to.equal(401);

@@ -6,6 +6,7 @@ const Promise = require('bluebird');
 
 const generateUser = require('../lib/generate-user.js');
 const generateLot = require('../lib/generate-lot.js');
+const generateSpot = require('../lib/generate-spot.js');
 
 const Spot = require('../../model/spot.js');
 const Lot = require('../../model/lot.js');
@@ -14,11 +15,6 @@ const User = require('../../model/user.js');
 require('../../server.js');
 
 const url = `http://localhost:${process.env.PORT}`;
-
-const exampleSpot = {
-  name: 'example spot',
-  description: 'example spot description',
-};
 
 describe('Spot Put Route', function() {
   describe('PUT: /api/lot/:lotID/spot/:spotID', function() {
@@ -32,6 +28,11 @@ describe('Spot Put Route', function() {
       .then( tempLot => {
         this.lot = tempLot;
         this.lot.userID = tempLot.userID;
+      })
+      .then( () => generateSpot(this.lot._id))
+      .then( tempSpot => {
+        this.spot = tempSpot;
+        this.spot.lotID = tempSpot.lotID;
         done();
       })
       .catch(done);
@@ -49,7 +50,7 @@ describe('Spot Put Route', function() {
 
     describe('valid request', () => {
       it('should return 200 status and correct property values', done => {
-        request.put(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}`)
+        request.put(`${url}/api/lot/${this.spot.lotID}/spot/${this.spot._id}`)
         .send({ name: 'new spot name'})
         .set({
           Authorization: `Bearer ${this.hostToken}`
@@ -65,7 +66,7 @@ describe('Spot Put Route', function() {
 
     describe('nonexistent id', () => {
       it('should return a 404 status code', done => {
-        request.put(`${url}/api/lot/${this.tempLot._id}/spot/1234567890`)
+        request.put(`${url}/api/lot/${this.spot.lotID}/spot/1234567890`)
         .set({
           Authorization: `Bearer ${this.hostToken}`
         })
@@ -78,8 +79,7 @@ describe('Spot Put Route', function() {
 
     describe('unauthorized request', () => {
       it('should return 401 status code', done => {
-        request.put(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}`)
-        .send(exampleSpot)
+        request.put(`${url}/api/lot/${this.spot.lotID}/spot/${this.spot._id}`)
         .end((error, response) => {
           expect(response.status).to.equal(401);
           done();
@@ -89,7 +89,7 @@ describe('Spot Put Route', function() {
 
     describe('invalid data', () => {
       it('should return 400 status code', done => {
-        request.put(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}`)
+        request.put(`${url}/api/lot/${this.spot.lotID}/spot/${this.spot._id}`)
         .set({
           Authorization: `Bearer ${this.hostToken}`
         })

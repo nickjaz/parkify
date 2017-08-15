@@ -4,9 +4,6 @@ const expect = require('chai').expect;
 const request = require('superagent');
 const Promise = require('bluebird');
 
-const generateUser = require('../lib/generate-user.js');
-const generateLot = require('../lib/generate-lot.js');
-
 const Spot = require('../../model/spot.js');
 const Lot = require('../../model/lot.js');
 const User = require('../../model/user.js');
@@ -15,6 +12,18 @@ require('../../server.js');
 
 const url = `http://localhost:${process.env.PORT}`;
 
+const exampleUser = {
+  name: 'exampleuser',
+  password: '12345',
+  email: 'example@test.com'
+};
+
+const exampleLot = {
+  name: 'example lot name',
+  description: 'example lot description',
+  address: 'example address'
+};
+
 const exampleSpot = {
   name: 'example spot',
   description: 'example spot description',
@@ -22,16 +31,28 @@ const exampleSpot = {
 
 describe('Spot Post Route', function() {
   describe('POST: /api/lot/:lotID/spot', function() {
-    beforeEach( done => {
-      generateUser()
-      .then( tempHost => {
-        this.host = tempHost.user;
-        this.hostToken = tempHost.token;
+    before( done => {
+      new User(exampleUser)
+      .generatePasswordHash(exampleUser.password)
+      .then( user => {
+        return user.save();
       })
-      .then( () => generateLot(this.host._id))
-      .then( tempLot => {
-        this.lot = tempLot;
-        this.lot.userID = tempLot.userID;
+      .then( user => {
+        this.tempUser = user;
+        return user.generateToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+
+    before( done => {
+      exampleLot.userID = this.tempUser._id.toString();
+      new Lot(exampleLot).save()
+      .then( lot => {
+        this.tempLot = lot;
         done();
       })
       .catch(done);
@@ -52,7 +73,7 @@ describe('Spot Post Route', function() {
         request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
         .send(exampleSpot)
         .set({
-          Authorization: `Bearer ${this.hostToken}`
+          Authorization: `Bearer ${this.tempToken}`
         })
         .end((error, response) => {
           if (error) return done(error);
@@ -80,6 +101,9 @@ describe('Spot Post Route', function() {
       it('should return 400 status code', done => {
         request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
         .send({})
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
         .end((error, response) => {
           expect(response.status).to.equal(400);
           done();
