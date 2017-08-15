@@ -31,11 +31,11 @@ const exampleSpot = {
 };
 
 const exampleTimeslot = {
-  startTime: Date.now,
-  endTime: Date.now
+  startTime: Date.now(),
+  endTime: Date.now()
 };
 
-describe('Timeslot Delete Route', function () {
+describe('Timeslot Delete Route', function() {
   describe('DELETE: /api/lot/:lotID/spot/:spotID/timeslot/:id', function () {
     before(done => {
       new User(exampleUser)
@@ -43,11 +43,11 @@ describe('Timeslot Delete Route', function () {
         .then( user => {
           return user.save();
         })
-        .then(user => {
+        .then( user => {
           this.tempUser = user;
           return user.generateToken();
         })
-        .then(token => {
+        .then( token => {
           this.tempToken = token;
         })
         .then(() => {
@@ -61,12 +61,12 @@ describe('Timeslot Delete Route', function () {
         });
 
       before(done => {
-        new Spot(exampleSpot).save()
-          .then(spot => {
-            this.tempSpot = spot;
-            done();
-          })
-          .catch(done);
+        Spot.create(exampleSpot)
+        .then(spot => {
+          this.tempSpot = spot;
+          done();
+        })
+        .catch(done);
       });
 
       after(done => {
@@ -74,7 +74,6 @@ describe('Timeslot Delete Route', function () {
           User.remove({}),
           Lot.remove({}),
           Spot.remove({}),
-          Timeslot.remove({})
         ])
           .then(() => done())
           .catch(done);
@@ -96,7 +95,7 @@ describe('Timeslot Delete Route', function () {
 
       describe('nonexistent id', () => {
         it('should return a 404 status code', done => {
-          request.delete(`${url}/api/lot/${this.tempLot._id}/spot/1234567890`)
+          request.delete(`${url}/api/lot/${this.tempLot._id}/timeslot/1234567890`)
             .set({
               Authorization: `Bearer ${this.tempToken}`
             })
