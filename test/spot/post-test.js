@@ -75,6 +75,7 @@ describe('Spot Post Route', function() {
             if (error) return done(error);
             expect(response.status).to.equal(201);
             expect(response.body.name).to.equal(exampleSpot.name);
+            expect(response.body.description).to.equal(exampleSpot.description);
             expect(response.body.lotID).to.equal(this.tempLot._id.toString());
             done();
           });
@@ -95,7 +96,7 @@ describe('Spot Post Route', function() {
       describe('invalid data', () => {
         it('should return 400 status code', done => {
           request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-          .send({ name: 'fake spot' })
+          .send({})
           .end((error, response) => {
             expect(response.status).to.equal(400);
             done();
