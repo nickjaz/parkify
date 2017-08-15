@@ -4,13 +4,15 @@ const Router = require('express').Router;
 const createError = require('http-errors');
 const debug = require('debug')('parkify:timeslot-router');
 const jsonParser = require('body-parser').json();
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
+
 const Spot = require('../model/spot.js');
 const Timeslot = require('../model/timeslot.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const timeslotRouter = module.exports = new Router();
 
-timeslotRouter.post('/api/lot/:lotID/spot/:spotID/timeslot', jsonParser, bearerAuth, function(request, response, next) {
+timeslotRouter.post('/api/lot/:lotID/spot/:spotID/timeslot', bearerAuth, jsonParser, function(request, response, next) {
   debug('POST: /api/lot/:lotID/spot/:spotID/timeslot');
 
   Spot.findByIdAndAddTimeslot(request.params.spotID, request.body)
@@ -18,7 +20,7 @@ timeslotRouter.post('/api/lot/:lotID/spot/:spotID/timeslot', jsonParser, bearerA
   .catch(next);
 });
 
-timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, bearerAuth, function(request, response, next) {
+timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, jsonParser, function(request, response, next) {
   debug('GET: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
   Timeslot.findById(request.params.id)
@@ -29,7 +31,7 @@ timeslotRouter.get('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, bear
   .catch(err => next(createError(404, err.message)));
 });
 
-timeslotRouter.put('/api/lot/:lotID/spot/:spotID/timeslot/:id', jsonParser, bearerAuth, function(request, response, next) {
+timeslotRouter.put('/api/lot/:lotID/spot/:spotID/timeslot/:id', bearerAuth, jsonParser, function(request, response, next) {
   debug('PUT: /api/lot/:lotID/spot/:spotID/timeslot/:id');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
