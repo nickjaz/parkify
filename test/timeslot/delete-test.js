@@ -4,9 +4,9 @@ const expect = require('chai').expect;
 const request = require('superagent');
 const Promise = require('bluebird');
 
+const User = require('../../model/user.js');
 const Spot = require('../../model/spot.js');
 const Lot = require('../../model/lot.js');
-const User = require('../../model/user.js');
 const Timeslot = require('../../model/timeslot.js');
 
 require('../../server.js');
@@ -35,28 +35,23 @@ const exampleTimeslot = {
   endTime: Date.now()
 };
 
-describe('Timeslot Delete Route', function() {
-  describe('DELETE: /api/lot/:lotID/spot/:spotID/timeslot/:id', function () {
-    before(done => {
-      new User(exampleUser)
-      .generatePasswordHash(exampleUser.password)
-      .then( user => {
-        return user.save();
-       })
-      .then( user => {
-        this.tempUser = user;
-        return user.generateToken();
-      })
-      .then( token => {
-        this.tempToken = token;
-        done();
-      })
-      .catch(done);
-    });
-
-    before(done => {
+describe('Timeslot Delete Route', function () {
+  before(done => {
+    new User(exampleUser)
+    .generatePasswordHash(exampleUser.password)
+    .then(user => {
+      return user.save();
+    })
+    .then(user => {
+      this.tempUser = user;
+      return user.generateToken();
+    })
+    .then(token => {
+      this.tempToken = token;
+    })
+    .then(() => {
       exampleLot.userID = this.tempUser._id.toString();
-      Lot.create(exampleLot)
+      new Lot(exampleLot).save()
       .then(lot => {
         this.tempLot = lot;
         done();
@@ -65,8 +60,7 @@ describe('Timeslot Delete Route', function() {
     });
 
     before(done => {
-      exampleSpot.userID = this.tempLot._id.toString();
-      Lot.create(exampleSpot)
+      new Spot(exampleSpot).save()
       .then(spot => {
         this.tempSpot = spot;
         done();
@@ -75,8 +69,8 @@ describe('Timeslot Delete Route', function() {
     });
     
     before(done => {
-      Timeslot.create(exampleTimeslot)
-      .then(timeSlot => {
+      new Timeslot(exampleTimeslot).save()
+      .then(timeslot => {
         this.tempTimeslot = timeslot;
         done();
       })
@@ -107,28 +101,27 @@ describe('Timeslot Delete Route', function() {
         });
       });
     });
+
+    describe('non-existent id', () => {
+      it('should return a 404 status code', done => {
+        request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/1234567890`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(404);
+          done();
+        });
+      });
+    });
+    describe('unauthorized request', () => {
+      it('should return 401 status code', done => {
+        request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}}`)
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
   });
-  
-  // describe('nonexistent id', () => {
-  //   it('should return a 404 status code', done => {
-  //     request.delete(`${url}/api/lot/${this.tempLot._id}/timeslot/1234567890`)
-  //     .set({
-  //       Authorization: `Bearer ${this.tempToken}`
-  //     })
-  //     .end((error, response) => {
-  //       expect(response.status).to.equal(404);
-  //       done();
-  //     });
-  //   });
-  // });
-  
-  // describe('unauthorized request', () => {
-  //   it('should return 401 status code', done => {
-  //     request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}/timeslot/${this.tempTimeslot._id}}`)
-  //     .end((error, response) => {
-  //       expect(response.status).to.equal(401);
-  //       done();
-  //     });
-  //   });
-  // });
 });
