@@ -50,7 +50,7 @@ spotRouter.put('/api/lot/:lotID/spot/:id', bearerAuth, jsonParser, function(requ
   });
 });
 
-spotRouter.delete('/api/lot/:lotID/spot/:id', function(request, response, next) {
+spotRouter.delete('/api/lot/:lotID/spot/:id', bearerAuth, function(request, response, next) {
   debug('DELETE: /api/lot/:lotID/spot/:id');
 
   Spot.findByIdAndRemove(request.params.id)
