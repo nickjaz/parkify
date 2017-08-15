@@ -4,6 +4,8 @@ const Router = require('express').Router;
 const createError = require('http-errors');
 const debug = require('debug')('parkify:timeslot-router');
 const jsonParser = require('body-parser').json();
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
+
 const Spot = require('../model/spot.js');
 const Timeslot = require('../model/timeslot.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');

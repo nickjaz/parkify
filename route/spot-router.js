@@ -13,7 +13,10 @@ spotRouter.post('/api/lot/:lotID/spot', jsonParser, function(request, response, 
   debug('POST: /api/lot/:lotID/spot');
 
   Lot.findByIdAndAddSpot(request.params.lotID, request.body)
-  .then(spot => response.json(spot))
+  .then(spot => {
+    response.sendStatus(201);
+    response.json(spot);
+  })
   .catch(next);
 });
 
@@ -23,7 +26,7 @@ spotRouter.get('/api/lot/:lotID/spot/:id', jsonParser, function(request, respons
   Spot.findById(request.params.id)
   .then(spot => {
     if(!spot) return next(createError(404, 'spot not found'));
-    response.json(spot);    
+    response.json(spot);
   })
   .catch(err => next(createError(404, err.message)));
 });

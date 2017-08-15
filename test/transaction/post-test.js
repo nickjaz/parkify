@@ -36,9 +36,9 @@ describe('POST: /api/transaction', function() {
         startTime: Date.now(),
         endTime: Date.now(),
         price: 1000000,
-        hostID: this.host._id, 
+        hostID: this.host._id,
         guestID: this.guest._id,
-        spotID: this.spot._id 
+        spotID: this.spot._id
       };
       done();
     })
@@ -58,7 +58,7 @@ describe('POST: /api/transaction', function() {
 
   describe('Valid Request', () => {
     it('should return a 201 status code and a location header.', done => {
-      
+
 
       request.post(`${url}/api/transaction`)
       .set({
