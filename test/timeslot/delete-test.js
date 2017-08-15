@@ -51,7 +51,7 @@ describe('Timeslot Delete Route', function() {
           this.tempToken = token;
         })
         .then(() => {
-          exampleLot.userID = this.tempUser._id.toString();
+          exampleSlot.lotID = this.tempSlot._id.toString();
           new Lot(exampleLot).save()
             .then( lot => {
               this.tempLot = lot;
@@ -61,9 +61,9 @@ describe('Timeslot Delete Route', function() {
         });
 
       before(done => {
-        Spot.create(exampleSpot)
-        .then(spot => {
-          this.tempSpot = spot;
+        Timeslot.create(exampleTimeslot)
+        .then(timeSlot => {
+          this.tempTimeslot = timeslot;
           done();
         })
         .catch(done);
