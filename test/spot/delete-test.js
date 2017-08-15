@@ -59,7 +59,7 @@ describe('Spot Delete Route', function() {
       it('should return 204 status code', done => {
         request.delete(`${url}/api/lot/${this.tempLot._id}/spot/${this.tempSpot._id}`)
         .set({
-          Authorization: `Bearer ${this.tempToken}`
+          Authorization: `Bearer ${this.hostToken}`
         })
         .end((error, response) => {
           if (error) return done(error);
@@ -73,7 +73,7 @@ describe('Spot Delete Route', function() {
       it('should return a 404 status code', done => {
         request.delete(`${url}/api/lot/${this.tempLot._id}/spot/1234567890`)
         .set({
-          Authorization: `Bearer ${this.tempToken}`
+          Authorization: `Bearer ${this.hostToken}`
         })
         .end((error, response) => {
           expect(response.status).to.equal(404);

@@ -52,7 +52,7 @@ describe('Spot Post Route', function() {
         request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
         .send(exampleSpot)
         .set({
-          Authorization: `Bearer ${this.tempToken}`
+          Authorization: `Bearer ${this.hostToken}`
         })
         .end((error, response) => {
           if (error) return done(error);
