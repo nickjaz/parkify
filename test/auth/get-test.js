@@ -26,12 +26,13 @@ describe('Auth Routes', function () {
         .then(user => {
           this.tempUser = user;
           done();
-        });
+        })
+        .catch(done);
       });
 
       after(done => {
         User.remove({})
-        .then(() => done())
+        .then( () => done())
         .catch(done);
       });
 
@@ -40,6 +41,122 @@ describe('Auth Routes', function () {
         .auth('exampleuser', '1234')
         .end((err, result) => {
           expect(result.status).to.equal(200);
+          done();
+        });
+      });
+    });
+    describe('W/O auth', function() {
+      before( done => {
+        let user = new User(exampleUser);
+        user.generatePasswordHash(exampleUser.password)
+        .then( user => user.save())
+        .then( user => {
+          this.tempUser = user;
+          done();
+        })
+        .catch(done);
+      });
+      after( done => {
+        User.remove({})
+        .then( () => done())
+        .catch(done);
+      });
+      it('should return a token', done => {
+        request.get(`${url}/api/signin`)
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+    describe('W/O basic auth', function() {
+      before( done => {
+        let user = new User(exampleUser);
+        user.generatePasswordHash(exampleUser.password)
+        .then( user => user.save())
+        .then( user => {
+          this.tempUser = user;
+          done();
+        })
+        .catch(done);
+      });
+      after(done => {
+        User.remove({})
+        .then( () => done())
+        .catch(done);
+      });
+      it('should return a token', done => {
+        request.get(`${url}/api/signin`)
+        .set({
+          Authorization: `${this.tempToken}`
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+    describe('no name in auth', function() {
+      before( done => {
+        let user = new User(exampleUser);
+        user.generatePasswordHash(exampleUser.password)
+        .then( user => user.save())
+        .then( user => {
+          this.tempUser = user;
+          done();
+        })
+        .catch(done);
+      });
+      after( done => {
+        User.remove({})
+        .then( () => done())
+        .catch(done);
+      });
+      it('should return a token', done => {
+        request.get(`${url}/api/signin`)
+        .set({
+          Authorization: 'ah ah ah'
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+    describe('has name authorization but no password', function(){
+      before(done => {
+        let user = new User(exampleUser);
+        user.generatePasswordHash(exampleUser.password)
+        .then(user => user.save())
+        .then(user => {
+          this.tempUser = user;
+          done();
+        })
+        .catch(done);
+      });
+      after(done => {
+        User.remove({})
+        .then(() => done())
+        .catch(done);
+      });
+      it('should return a token', done => {
+        request.get(`${url}/api/signin`)
+        .set({
+          Authorization: 'Basic name:'
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+  });
+  describe('Get /', function(){
+    describe('/ error', function(){
+      it('should return a message', done => {
+        request.get(`${url}/`)
+        .end((err, response) => {
+          expect(response.text).to.equal('This is working!!');
           done();
         });
       });
