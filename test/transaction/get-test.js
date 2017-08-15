@@ -26,6 +26,11 @@ describe('GET: /api/transaction/:id', function() {
       this.guest = data.user;
       this.guestToken = data.token;
     })
+    .then(() => generateUser())
+    .then(data => {
+      this.uninvolvedGuest = data.user;
+      this.uninvolvedGuestToken = data.token;
+    })
     .then(() => generateLot(this.host._id))
     .then(lot => {
       this.lot = lot;
@@ -86,8 +91,19 @@ describe('GET: /api/transaction/:id', function() {
   });
 
   describe('Unauthorized Request', () => {
-    it('should return a 401 status code.', done => {
+    it('should return a 401 status code with no authorization.', done => {
       request.get(`${url}/api/transaction/${this.transaction._id}`)
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        done();
+      });
+    });
+
+    it('should return a 401 status code with unauthorized credentials.', done => {
+      request.get(`${url}/api/transaction/${this.transaction._id}`)
+      .set({
+        Authorization: `Bearer ${this.uninvolvedGuestToken}`
+      })
       .end((error, response) => {
         expect(response.status).to.equal(401);
         done();
