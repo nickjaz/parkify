@@ -104,54 +104,54 @@ describe('Auth Routes', function () {
       before(done => {
         let user = new User(exampleUser);
         user.generatePasswordHash(exampleUser.password)
-          .then(user => user.save())
-          .then(user => {
-            this.tempUser = user;
-            done();
-          })
-          .catch(done);
+        .then(user => user.save())
+        .then(user => {
+          this.tempUser = user;
+          done();
+        })
+        .catch(done);
       });
       after(done => {
         User.remove({})
-          .then(() => done())
-          .catch(done);
+        .then(() => done())
+        .catch(done);
       });
       it('should return a token', done => {
         request.get(`${url}/api/signin`)
-          .set({
-            Authorization: 'ah ah ah'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
+        .set({
+          Authorization: 'Basic fam'
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
       });
     });
     describe('has name authorization but no password', function () {
       before(done => {
         let user = new User(exampleUser);
         user.generatePasswordHash(exampleUser.password)
-          .then(user => user.save())
-          .then(user => {
-            this.tempUser = user;
-            done();
-          })
-          .catch(done);
+        .then(user => user.save())
+        .then(user => {
+          this.tempUser = user;
+          done();
+        })
+        .catch(done);
       });
       after(done => {
         User.remove({})
-          .then(() => done())
-          .catch(done);
+        .then(() => done())
+        .catch(done);
       });
       it('should return a token', done => {
         request.get(`${url}/api/signin`)
-          .set({
-            Authorization: 'Basic name:'
-          })
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
+        .set({
+          Authorization: 'Basic name:'
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
       });
     });
   });
