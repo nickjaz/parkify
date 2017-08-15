@@ -43,15 +43,16 @@ describe('Spot Post Route', function() {
       })
       .then( token => {
         this.tempToken = token;
+        exampleLot.userID = this.tempUser._id;
         done();
       })
       .catch(done);
     });
 
     before( done => {
+      console.log(exampleLot);
       new Lot(exampleLot).save()
       .then( lot => {
-        lot.userID = this.tempUser._id.toString();
         this.tempLot = lot;
         done();
       })
@@ -71,10 +72,10 @@ describe('Spot Post Route', function() {
     describe('valid request', () => {
       it('should return 201 status and expected property values', done => {
         request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-        .send(exampleSpot)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
+        .send(exampleSpot)
         .end((error, response) => {
           if (error) return done(error);
           expect(response.status).to.equal(201);

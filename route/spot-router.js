@@ -17,8 +17,7 @@ spotRouter.post('/api/lot/:lotID/spot', bearerAuth, jsonParser, function(request
 
   Lot.findByIdAndAddSpot(request.params.lotID, request.body)
   .then(spot => {
-    response.sendStatus(201);
-    response.json(spot);
+    response.status(201).json(spot);
   })
   .catch(next);
 });
