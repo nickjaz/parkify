@@ -105,6 +105,8 @@ describe('Timeslot Get Route', function() {
         .end((error, response) => {
           if(error) return done(error);
           expect(response.status).to.equal(200);
+          expect(Date.parse(response.body.startTime)).to.equal(exampleTimeslot.startTime);
+          expect(Date.parse(response.body.endTime)).to.equal(exampleTimeslot.endTime);
           done();
         });
       });
