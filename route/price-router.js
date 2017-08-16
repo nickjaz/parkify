@@ -9,20 +9,20 @@ const Price = require('../model/price.js');
 
 const priceRouter = module.exports = Router();
 
-priceRouter.post('/api/price', bearerAuth, jsonParser, function(request, response, next) {
+priceRouter.post('/api/lot/:lotID/spot/:spotID/price', bearerAuth, jsonParser, function(request, response, next) {
   debug('POST: /api/price');
 
   Price.create(request.body)
-    .then(price => {
-      response.json(price);
-    })
-    .catch(error => {
-      error = createError(400, error.message);
-      next(error);
-    });
+  .then(price => {
+    response.json(price);
+  })
+  .catch(error => {
+    error = createError(400, error.message);
+    next(error);
+  });
 });
 
-priceRouter.get('/api/price/:id', bearerAuth, function(request, response, next) {
+priceRouter.get('/api/lot/:lotID/spot/:spotID/price/:priceID', bearerAuth, function(request, response, next) {
   debug('GET: /api/price/:id');
 
   Price.findById(request.params.id)
@@ -33,7 +33,7 @@ priceRouter.get('/api/price/:id', bearerAuth, function(request, response, next) 
   .catch(err => next(createError(404, err.message)));
 });
 
-priceRouter.put('/api/price/:id', bearerAuth, jsonParser, function(request, response, next) {
+priceRouter.put('/api/lot/:lotID/spot/:spotID/price/:priceID', bearerAuth, jsonParser, function(request, response, next) {
   debug('PUT: /api/price/:id');
 
   Price.findByIdAndUpdate(request.params.id, request.body, { new: true })
@@ -41,7 +41,7 @@ priceRouter.put('/api/price/:id', bearerAuth, jsonParser, function(request, resp
   .catch(err => next(createError(404, err.message)));
 });
 
-priceRouter.delete('/api/price/:id', bearerAuth, function(request, response, next) {
+priceRouter.delete('/api/lot/:lotID/spot/:spotID/price/:priceID', bearerAuth, function(request, response, next) {
   debug('DELETE: /api/price/:id');
 
   Price.findByIdAndRemove(request.params.id)
