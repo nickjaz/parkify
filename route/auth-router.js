@@ -11,6 +11,8 @@ const authRouter = module.exports = Router();
 authRouter.post('/api/signup', jsonParser, function(request, response, next) {
   debug('POST: /api/signup');
 
+  // if (!request.user) return next(createError(401, 'Authorization header required'));
+
   let password = request.body.password;
   delete request.body.password;
 
