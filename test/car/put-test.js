@@ -12,7 +12,7 @@ const url = `http://localhost:${process.env.PORT}`;
 
 require('../../server.js');
 
-describe('GET: /api/car/:id', function() {
+describe('PUT: /api/car/:id', function() {
   beforeEach( done => {
     generateUser()
     .then( data => {
