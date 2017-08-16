@@ -16,12 +16,10 @@ feedbackRouter.post('/api/feedback', bearerAuth, jsonParser, function(request, r
 
   Feedback.create(request.body)
   .then(feedback => {
-    response.json(feedback);
+    response.set('Location', `/api/feedback/${feedback._id}`);
+    response.sendStatus(201);
   })
-  .catch(error => {
-    error = createError(400, error.message);
-    next(error);
-  });
+  .catch(next);
 });
 
 feedbackRouter.get('/api/feedback/:id', function(request, response, next) {
