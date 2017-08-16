@@ -5,24 +5,23 @@ const createError = require('http-errors');
 const debug = require('debug')('parkify:price-router');
 const jsonParser = require('body-parser').json();
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
+
+const Lot = require('../model/lot.js')
 const Price = require('../model/price.js');
 
 const priceRouter = module.exports = Router();
 
-priceRouter.post('/api/lot/:lotID/spot/:spotID/price', bearerAuth, jsonParser, function(request, response, next) {
-  debug('POST: /api/lot/:lotID/spot/:spotID/price');
-
-  Price.create(request.body)
+priceRouter.post('/api/lot/:lotID/price', bearerAuth, jsonParser, function(request, response, next) {
+  debug('/api/lot/:lotID/price');
+  
+  Lot.findByIdAndAddPrice(request.params.lotID, request.body)
   .then(price => {
-    response.json(price);
+    response.status(201).json(price);
   })
-  .catch(error => {
-    error = createError(400, error.message);
-    next(error);
-  });
+  .catch(next);
 });
 
-// priceRouter.get('/api/lot/:lotID/spot/:spotID/price/:priceID', bearerAuth, function(request, response, next) {
+// priceRouter.get('/api/lot/:lotID/price/:priceID', bearerAuth, function(request, response, next) {
 //   debug('GET: /api/price/:id');
 //
 //   Price.findById(request.params.id)
@@ -33,7 +32,7 @@ priceRouter.post('/api/lot/:lotID/spot/:spotID/price', bearerAuth, jsonParser, f
 //   .catch(err => next(createError(404, err.message)));
 // });
 //
-// priceRouter.put('/api/lot/:lotID/spot/:spotID/price/:priceID', bearerAuth, jsonParser, function(request, response, next) {
+// priceRouter.put('/api/lot/:lotID/price/:priceID', bearerAuth, jsonParser, function(request, response, next) {
 //   debug('PUT: /api/price/:id');
 //
 //   Price.findByIdAndUpdate(request.params.id, request.body, { new: true })
@@ -41,7 +40,7 @@ priceRouter.post('/api/lot/:lotID/spot/:spotID/price', bearerAuth, jsonParser, f
 //   .catch(err => next(createError(404, err.message)));
 // });
 //
-// priceRouter.delete('/api/lot/:lotID/spot/:spotID/price/:priceID', bearerAuth, function(request, response, next) {
+// priceRouter.delete('/api/lot/:lotID/price/:priceID', bearerAuth, function(request, response, next) {
 //   debug('DELETE: /api/price/:id');
 //
 //   Price.findByIdAndRemove(request.params.id)
