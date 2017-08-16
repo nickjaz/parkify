@@ -1,6 +1,6 @@
 'use strict';
 
-const mongoose = require('mongoose');
+const mongoose =   require('mongoose');
 const debug = require('debug');
 const createError = require('http-errors');
 const Schema = mongoose.Schema;
