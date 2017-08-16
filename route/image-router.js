@@ -95,3 +95,20 @@ imageRouter.get('/api/lot/:lotID/image/:id', bearerAuth, function(request, respo
   .then( image => response.json(image))
   .catch(error => next(error));
 });
+
+imageRouter.delete('/api/lot/:id/image/:id', bearerAuth, function(request, response, next) {
+  debug('DELETE: /api/lot/:lotID/image/:id');
+
+  Image.findById(request.params.id)
+  .then( image => {
+    let params = {
+      Bucket: process.env.AWS_BUCKET,
+      Key: image.objectKey
+    };
+    s3.deleteObject(params, (error, s3data) => {
+      Image.findByIdAndDelete(s3data._id);
+    });
+    response.sendStatus(204);
+  })
+  .catch(error => next(error));
+});
