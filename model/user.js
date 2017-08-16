@@ -78,6 +78,41 @@ userSchema.methods.generateToken = function () {
   });
 };
 
+userSchema.methods.generateHostTokenHash = function () {
+  debug('generateHostTokenHash');
+
+  return new Promise((resolve, reject) => {
+    let tries = 0;
+
+    _generateTokenHash.call(this);
+
+    function _generateTokenHash() {
+      this.tokenHash = crypto.randomBytes(32).toString('hex');
+      this.save()
+      .then(() => {
+        resolve(this.tokenHash);
+      })
+      .catch(err => {
+        if (tries > 3) return reject(err);
+        tries++;
+        _generateTokenHash.call(this);
+      });
+    }
+  });
+};
+
+userSchema.methods.generateHostToken = function () {
+  debug('generateHostToken');
+
+  return new Promise((resolve, reject) => {
+    this.generateTokenHash()
+    .then(tokenHash => {
+      resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET));
+    })
+    .catch(err => reject(err));
+  });
+};
+
 userSchema.statics.createAuthenticated = function(userData, callback) {
   debug('createAuthenticated');
   new User(userData).generatePasswordHash(userData.password)
