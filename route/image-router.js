@@ -31,6 +31,15 @@ function s3uploadProm(params) {
   });
 }
 
+function s3getProm(params) {
+  return new Promise((resolve, reject) => {
+    s3.getObject(params, (error, s3data) => {
+      if(error) reject(error);
+      resolve(s3data);
+    });
+  });
+}
+
 imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), function(request, response, next) {
   debug('POST: /api/lot/:lotID/image');
 
@@ -62,11 +71,27 @@ imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), fu
       userID: request.user._id,
       lotID: request.params.lotID
     };
+
     return new Image(imageData).save();
   })
   .then( image => {
     response.set('Location', `api/lot/:lotID/image/${image._id}`);
     response.sendStatus(201);
   })
+  .catch(error => next(error));
+});
+
+imageRouter.get('/api/lot/:lotID/image/:id', bearerAuth, function(request, response, next) {
+  debug('GET: /api/lot/:lotID/image/:id');
+
+  Image.findById(request.params.id)
+  .then( image => {
+    let params = {
+      Bucket: process.env.AWS_BUCKET,
+      Key: image.objectKey
+    };
+    s3getProm(params);
+  })
+  .then( image => response.json(image))
   .catch(error => next(error));
 });
