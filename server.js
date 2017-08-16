@@ -16,7 +16,7 @@ const transactionRouter = require('./route/transaction-router.js');
 const errorHandler = require('./lib/error-handler.js');
 
 dotenv.load();
-const PORT = process.env.PORT || 3000;
+
 mongoose.connect(process.env.MONGODB_URI, {
   useMongoClient: true
 });
@@ -34,6 +34,6 @@ app.use(timeslotRouter);
 app.use(transactionRouter);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  debug(`listening on: ${PORT}`);
+app.listen(process.env.PORT, () => {
+  debug(`listening on: ${process.env.PORT}`);
 });
