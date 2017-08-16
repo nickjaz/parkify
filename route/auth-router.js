@@ -10,7 +10,7 @@ const authRouter = module.exports = Router();
 
 authRouter.post('/api/signup', jsonParser, function(request, response, next) {
   debug('POST: /api/signup');
-
+  
   let password = request.body.password;
   delete request.body.password;
 

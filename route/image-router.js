@@ -17,7 +17,9 @@ const bearerAuth = require('../lib/bearer-auth-middleware.js');
 AWS.config.setPromisesDependency(require('bluebird'));
 
 const s3 = new AWS.S3();
+
 const dataDir = `${__dirname}/../../data`;
+
 const upload = multer({ dest: dataDir });
 
 const imageRouter = module.exports = Router();
@@ -25,7 +27,6 @@ const imageRouter = module.exports = Router();
 function s3uploadProm(params) {
   return new Promise((resolve, reject) => {
     s3.upload(params, (error, s3data) => {
-      if (error) reject(error);
       resolve(s3data);
     });
   });
