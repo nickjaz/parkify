@@ -2,105 +2,89 @@
 
 const expect = require('chai').expect;
 const request = require('superagent');
-const Promise = require('bluebird');
 
-const Spot = require('../../model/spot.js');
-const Lot = require('../../model/lot.js');
 const User = require('../../model/user.js');
+const Lot = require('../../model/lot.js');
+const Spot = require('../../model/spot.js');
 
-require('../../server.js');
+const generateUser = require('../lib/generate-user.js');
+const generateLot = require('../lib/generate-lot.js');
 
 const url = `http://localhost:${process.env.PORT}`;
 
-const exampleUser = {
-  name: 'exampleuser',
-  password: '12345',
-  email: 'example@test.com'
-};
+require('../../server.js');
 
-const exampleLot = {
-  name: 'example lot',
-  description: 'example lot description',
-  address: 'example address',
-};
+describe('ENHC POST: ${url}/api/lot/${this.lot._id}/spot', function() {
+  beforeEach( done => {
+    generateUser()
+    .then( tempHost => {
+      this.host = tempHost.user;
+      this.hostToken = tempHost.token;
+    })
+    .then( () => generateLot(this.host._id))
+    .then( tempLot => {
+      this.lot = tempLot;
+      this.lot.userID = tempLot.userID;
 
-const exampleSpot = {
-  name: 'example spot',
-  description: 'example spot description',
-};
+      this.spot = {
+        name: 'example spot',
+        description: 'example spot description',
+        lotID: this.lot._id
+      };
+      done();
+    })
+    .catch(done);
+  });
 
-describe('Spot Post Route', function() {
-  describe('POST: /api/lot/:lotID/spot', function() {
-    before( done => {
-      new User(exampleUser)
-      .generatePasswordHash(exampleUser.password)
-      .then( user => {
-        return user.save();
+  afterEach( done => {
+    Promise.all([
+      User.remove({}),
+      Lot.remove({}),
+      Spot.remove({})
+    ])
+    .then( () => done())
+    .catch(done);
+  });
+
+  describe('Valid Request', () => {
+    it('should return a 201 status code', done => {
+      request.post(`${url}/api/lot/${this.lot._id}/spot`)
+      .send(this.spot)
+      .set({
+        Authorization: `Bearer ${this.hostToken}`
       })
-      .then( user => {
-        this.tempUser = user;
-        return user.generateToken();
+      .end((error, response) => {
+        if (error) return done(error);
+        expect(response.status).equal(201);
+        expect(response.body.name).equal(this.spot.name);
+        expect(response.body.description).equal(this.spot.description);
+        expect(response.body.lotID.toString()).equal(this.lot._id.toString());
+        done();
+      });
+    });
+  });
+
+  describe('Unauthorized Request', () => {
+    it('should return 401 status code', done => {
+      request.post(`${url}/api/lot/${this.lot._id}/spot`)
+      .send(this.spot)
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        done();
+      });
+    });
+  });
+
+  describe('Invalid Data', () => {
+    it('should return 400 status code', done => {
+      request.post(`${url}/api/lot/${this.lot._id}/spot`)
+      .send({})
+      .set({
+        Authorization: `Bearer ${this.hostToken}`
       })
-      .then( token => {
-        this.tempToken = token;
-      })
-      .then( () => {
-        exampleLot.userID = this.tempUser._id.toString();
-        new Lot(exampleLot).save()
-        .then( lot => {
-          this.tempLot = lot;
-          done();
-        })
-        .catch(done);
-      });
-
-      after( done => {
-        Promise.all([
-          User.remove({}),
-          Lot.remove({}),
-          Spot.remove({})
-        ])
-        .then( () => done())
-        .catch(done);
-      });
-
-      describe('valid request', () => {
-        it('should return 201 status and expected property values', done => {
-          request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-          .send(exampleSpot)
-          .set({
-            Authorization: `Bearer ${this.tempToken}`
-          })
-          .end((error, response) => {
-            if (error) return done(error);
-            expect(response.status).to.equal(201);
-            expect(response.body.name).to.equal(exampleSpot.name);
-            expect(response.body.lotID).to.equal(this.tempLot._id.toString());
-            done();
-          });
-        });
-      });
-
-      describe('unauthorized request', () => {
-        it('should return 401 status code', done => {
-          request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-          .send(exampleSpot)
-          .end((error, response) => {
-            expect(response.status).to.equal(401);
-            done();
-          });
-        });
-      });
-
-      describe('invalid data', () => {
-        it('should return 400 status code', done => {
-          request.post(`${url}/api/lot/${this.tempLot._id}/spot`)
-          .send({ name: 'fake spot' })
-          .end((error, response) => {
-            expect(response.status).to.equal(400);
-            done();
-          });
-        });
+      .end((error, response) => {
+        expect(response.status).to.equal(400);
+        done();
       });
     });
   });
