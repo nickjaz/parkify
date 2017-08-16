@@ -6,7 +6,7 @@ const User = require('../model/user.js');
 const Lot = require('../model/lot.js');
 const Spot = require('../model/spot.js');
 const Transaction = require('../model/transaction.js');
-const generateLotTransactions = require('./lib/generate-lot-transactions.js');
+const generateLotTransactions = require('./lib/price-prediction/generate-lot-transactions.js');
 
 require('../server.js');
 
