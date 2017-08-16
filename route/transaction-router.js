@@ -10,17 +10,13 @@ const Transaction = require('../model/transaction.js');
 
 const transactionRouter = new Router();
 
-transactionRouter.post('/api/transaction', bearerAuth, jsonParser, transactionParser, function(request, response, next) {
+transactionRouter.post('/api/transaction', bearerAuth, jsonParser, transactionParser, function(request, response) {
   debug('POST: /api/transaction');
 
   Transaction.create(request.body)
   .then(transaction => {
     response.set('Location', `/api/lot/${transaction._id}`);
     response.sendStatus(201);
-  })
-  .catch(error => {
-    error = createError(400, error.message);
-    next(error);
   });
 });
 
@@ -28,12 +24,7 @@ transactionRouter.get('/api/transaction/:id', bearerAuth, function(request, resp
   debug('GET: /api/transaction/:id');
 
   Transaction.findById(request.params.id)
-  .then(transaction => {
-    if (!transaction) {
-      let error = createError(404, 'Transaction not found.');
-      return next(error);
-    }
-    
+  .then(transaction => {    
     if (!transaction.hostID.equals(request.user._id) && !transaction.guestID.equals(request.user._id)) {
       let error = createError(401, 'Not authorized to access this transaction.');
       return next(error);

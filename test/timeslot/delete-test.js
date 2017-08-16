@@ -6,16 +6,18 @@ const request = require('superagent');
 const User = require('../../model/user.js');
 const Lot = require('../../model/lot.js');
 const Spot = require('../../model/spot.js');
+const Timeslot = require('../../model/timeslot.js');
 
 const generateUser = require('../lib/generate-user.js');
 const generateLot = require('../lib/generate-lot.js');
 const generateSpot = require('../lib/generate-spot.js');
+const generateTimeslot = require('../lib/generate-timeslot');
 
 const url = `http://localhost:${process.env.PORT}`;
 
 require('../../server.js');
 
-describe('ENHC DELETE: ${url}/api/lot/${this.lot._id}/spot', function() {
+describe('Timeslot DELETE: /api/lot/:lotID/spot/:spotID/timeslot/:id', function() {
   beforeEach( done => {
     generateUser()
     .then( tempHost => {
@@ -30,6 +32,10 @@ describe('ENHC DELETE: ${url}/api/lot/${this.lot._id}/spot', function() {
     .then( () => generateSpot(this.lot._id))
     .then( tempSpot => {
       this.spot = tempSpot;
+    })
+    .then( () => generateTimeslot(this.spot._id))
+    .then( tempTimeslot => {
+      this.timeslot = tempTimeslot;
       done();
     })
     .catch(done);
@@ -39,45 +45,45 @@ describe('ENHC DELETE: ${url}/api/lot/${this.lot._id}/spot', function() {
     Promise.all([
       User.remove({}),
       Lot.remove({}),
-      Spot.remove({})
+      Spot.remove({}),
+      Timeslot.remove({})
     ])
     .then( () => done())
     .catch(done);
   });
 
-  describe('valid request', () => {
-    it('should return 204 status code', done => {
-      request.delete(`${url}/api/lot/${this.lot._id}/spot/${this.spot._id}`)
+  describe('Valid Request', () => {
+    it('should return a 204 status code', done => {
+      request.delete(`${url}/api/lot/${this.lot._id}/spot/${this.spot._id}/timeslot/${this.timeslot._id}`)
       .set({
         Authorization: `Bearer ${this.hostToken}`
       })
       .end((error, response) => {
         if (error) return done(error);
-        expect(response.status).to.equal(204);
+        expect(response.status).equal(204);
         done();
       });
     });
   });
 
-
-  describe('nonexistent id', () => {
+  describe('Unregistered Id', () => {
     it('should return a 404 status code', done => {
-      request.delete(`${url}/api/lot/${this.lot._id}/spot/1234567890`)
+      request.delete(`${url}/api/lot/${this.lot._id}/spot/${this.spot._id}/timeslot/123456`)
       .set({
         Authorization: `Bearer ${this.hostToken}`
       })
       .end((error, response) => {
-        expect(response.status).to.equal(404);
+        expect(response.status).equal(404);
         done();
       });
     });
   });
 
-  describe('unauthorized request', () => {
-    it('should return 401 status code', done => {
-      request.delete(`${url}/api/lot/${this.lot._id}/spot/${this.spot._id}`)
+  describe('Invalid Token', () => {
+    it('should return a 401 status code', done => {
+      request.delete(`${url}/api/lot/${this.lot._id}/spot/${this.spot._id}/timeslot/${this.timeslot._id}`)
       .end((error, response) => {
-        expect(response.status).to.equal(401);
+        expect(response.status).equal(401);
         done();
       });
     });
