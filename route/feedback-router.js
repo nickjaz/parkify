@@ -1,11 +1,12 @@
 'use strict';
 
 const Router = require('express').Router;
+const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 const debug = require('debug')('parkify:feedback-router');
-const jsonParser = require('body-parser').json();
-const bearerAuth = require('../lib/bearer-auth-middleware.js');
+
 const Feedback = require('../model/feedback.js');
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const feedbackRouter = module.exports = Router();
 
@@ -16,8 +17,7 @@ feedbackRouter.post('/api/feedback', bearerAuth, jsonParser, function(request, r
 
   Feedback.create(request.body)
   .then(feedback => {
-    response.set('Location', `/api/feedback/${feedback._id}`);
-    response.sendStatus(201);
+    response.json(feedback);
   })
   .catch(next);
 });
