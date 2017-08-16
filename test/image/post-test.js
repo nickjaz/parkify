@@ -82,5 +82,29 @@ describe('Image Post Route', function() {
         });
       });
     });
+
+    describe('invalid data', () => {
+      it('should return 400', done => {
+        request.post(`${url}/api/lot/${this.tempLot._id}/image`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(400);
+          done();
+        });
+      });
+    });
+
+    describe('unauthorized request', () => {
+      it('should return 401', done => {
+        request.post(`${url}/api/lot/${this.tempLot._id}/image`)
+        .attach('image', exampleImage.image)
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
   });
 });
