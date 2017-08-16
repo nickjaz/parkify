@@ -17,7 +17,7 @@ const url = `http://localhost:${process.env.PORT}`;
 
 require('../../server.js');
 
-describe('PUT: /api/car/:id', function() {
+describe('Timeslot PUT: /api/lot/:lotID/spot/:spotID/timeslot/:id', function() {
   beforeEach( done => {
     generateUser()
     .then( tempHost => {
