@@ -17,7 +17,8 @@ feedbackRouter.post('/api/feedback', bearerAuth, jsonParser, function(request, r
 
   Feedback.create(request.body)
   .then(feedback => {
-    response.json(feedback);
+    response.set('Location', `/api/feedback/${feedback._id}`);
+    response.sendStatus(201);
   })
   .catch(next);
 });
