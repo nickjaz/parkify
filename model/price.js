@@ -1,10 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const debug = require('debug'('parkify:price'));
-const createError = require('http-errors');
 const Schema = mongoose.Schema;
-const Spot = require('./spot.js');
 
 const priceSchema = Schema({
   start: { type: Date, required: true },
