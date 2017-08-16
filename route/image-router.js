@@ -31,15 +31,6 @@ function s3uploadProm(params) {
   });
 }
 
-function s3getProm(params) {
-  return new Promise((resolve, reject) => {
-    s3.getObject(params, (error, s3data) => {
-      if(error) reject(error);
-      resolve(s3data);
-    });
-  });
-}
-
 imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), function(request, response, next) {
   debug('POST: /api/lot/:lotID/image');
 
@@ -86,14 +77,10 @@ imageRouter.get('/api/lot/:lotID/image/:id', bearerAuth, function(request, respo
 
   Image.findById(request.params.id)
   .then( image => {
-    let params = {
-      Bucket: process.env.AWS_BUCKET,
-      Key: image.objectKey
-    };
-    s3getProm(params);
+    if (!image) return next(createError(404, 'Image Not Found'));
+    response.json(image);
   })
-  .then( image => response.json(image))
-  .catch(error => next(error));
+  .catch(error => next(createError(404, error.message)));
 });
 
 imageRouter.delete('/api/lot/:id/image/:id', bearerAuth, function(request, response, next) {
@@ -105,10 +92,12 @@ imageRouter.delete('/api/lot/:id/image/:id', bearerAuth, function(request, respo
       Bucket: process.env.AWS_BUCKET,
       Key: image.objectKey
     };
+
     s3.deleteObject(params, (error, s3data) => {
-      Image.findByIdAndDelete(s3data._id);
+      Image.findByIdAndRemove(s3data._id)
+      .then(response.sendStatus(204))
+      .catch(error => next(error));
     });
-    response.sendStatus(204);
   })
   .catch(error => next(error));
 });
