@@ -68,7 +68,6 @@ describe('Image Post Route', function() {
     });
 
     describe('valid request', () => {
-
       it('should return 200 status code', done => {
         request.post(`${url}/api/lot/${this.tempLot._id}/image`)
         .set({
