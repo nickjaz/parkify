@@ -17,14 +17,16 @@ const bearerAuth = require('../lib/bearer-auth-middleware.js');
 AWS.config.setPromisesDependency(require('bluebird'));
 
 const s3 = new AWS.S3();
-const dataDir = `${__dirname}/../data`;
+
+const dataDir = `${__dirname}/../../data`;
+
 const upload = multer({ dest: dataDir });
 
 const imageRouter = module.exports = Router();
 
 function s3uploadProm(params) {
   return new Promise((resolve, reject) => {
-    s3.upload(params, (err, s3data) => {
+    s3.upload(params, (error, s3data) => {
       resolve(s3data);
     });
   });
@@ -63,6 +65,9 @@ imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), fu
     };
     return new Image(imageData).save();
   })
-  .then( image => response.json(image))
+  .then( image => {
+    response.set('Location', `api/lot/:lotID/image/${image._id}`);
+    response.sendStatus(201);
+  })
   .catch(error => next(error));
 });
