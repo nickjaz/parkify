@@ -32,19 +32,19 @@ priceRouter.get('/api/lot/:lotID/price/:id', bearerAuth, function(request, respo
   })
   .catch(err => next(createError(404, err.message)));
 });
-//
-// priceRouter.put('/api/lot/:lotID/price/:id', bearerAuth, jsonParser, function(request, response, next) {
-//   debug('PUT: /api/lot/:lotID/price/:id');
-//
-//   Price.findByIdAndUpdate(request.params.id, request.body, { new: true })
-//   .then(price => response.json(price))
-//   .catch(err => next(createError(404, err.message)));
-// });
-//
-// priceRouter.delete('/api/lot/:lotID/price/:id', bearerAuth, function(request, response, next) {
-//   debug('DELETE: /api/lot/:lotID/price/:id');
-//
-//   Price.findByIdAndRemove(request.params.id)
-//   .then(() => response.sendStatus(204))
-//   .catch(err => next(createError(404, err.message)));
-// });
+
+priceRouter.put('/api/lot/:lotID/price/:id', bearerAuth, jsonParser, function(request, response, next) {
+  debug('PUT: /api/lot/:lotID/price/:id');
+
+  Price.findByIdAndUpdate(request.params.id, request.body, { new: true })
+  .then(price => response.json(price))
+  .catch(err => next(createError(404, err.message)));
+});
+
+priceRouter.delete('/api/lot/:lotID/price/:id', bearerAuth, function(request, response, next) {
+  debug('DELETE: /api/lot/:lotID/price/:id');
+
+  Price.findByIdAndRemove(request.params.id)
+  .then(() => response.sendStatus(204))
+  .catch(err => next(createError(404, err.message)));
+});
