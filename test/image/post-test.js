@@ -68,7 +68,7 @@ describe('Image Post Route', function() {
     });
 
     describe('valid request', () => {
-      it('should return 201 and resoruce URI', done => {
+      it('should return 200 status code', done => {
         request.post(`${url}/api/lot/${this.tempLot._id}/image`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
@@ -76,8 +76,7 @@ describe('Image Post Route', function() {
         .attach('image', exampleImage.image)
         .end((error, response) => {
           if(error) return done(error);
-          expect(response.status).to.equal(201);
-          expect(response.headers.location).to.be.a('string');
+          expect(response.status).to.equal(200);
           done();
         });
       });

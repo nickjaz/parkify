@@ -65,10 +65,7 @@ imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), fu
 
     return new Image(imageData).save();
   })
-  .then( image => {
-    response.set('Location', `api/lot/:lotID/image/${image._id}`);
-    response.sendStatus(201);
-  })
+  .then( image => response.json(image))
   .catch(error => next(error));
 });
 
@@ -99,5 +96,5 @@ imageRouter.delete('/api/lot/:id/image/:id', bearerAuth, function(request, respo
       .catch(error => next(error));
     });
   })
-  .catch(error => next(error));
+  .catch(error => next(createError(404, error.message)));
 });
