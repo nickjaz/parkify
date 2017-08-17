@@ -9,12 +9,13 @@ const Price = require('../../model/price.js');
 
 const generateUser = require('../lib/generate-user.js');
 const generateLot = require('../lib/generate-lot.js');
+const generatePrice = require('../lib/generate-price.js');
 
 const url = `http://localhost:${process.env.PORT}`;
 
 require('../../server.js');
 
-describe('Price Override POST Route', function() {
+describe('Price Override GET Route:', function() {
   beforeEach( done => {
     generateUser()
     .then( tempHost => {
@@ -25,14 +26,10 @@ describe('Price Override POST Route', function() {
     .then( tempLot => {
       this.lot = tempLot;
       this.lot.userID = tempLot.userID;
-
-      this.price = {
-        startTime: Date('017-09-14T12:00:00.000Z'),
-        endTime: Date('017-09-14T03:00:00.000Z'),
-        price: '8',
-        lotID: this.lot._id
-      };
-
+    })
+    .then( () => generatePrice(this.lot._id))
+    .then( tempPrice => {
+      this.price = tempPrice;
       done();
     })
     .catch(done);
@@ -49,15 +46,14 @@ describe('Price Override POST Route', function() {
   });
 
   describe('Valid Request', () => {
-    it('should return a 201 status code', done => {
-      request.post(`${url}/api/lot/${this.lot._id}/price`)
+    it('should return a 200 status code', done => {
+      request.get(`${url}/api/lot/${this.lot._id}/price/${this.price._id}`)
       .set({
         Authorization: `Bearer ${this.hostToken}`
       })
-      .send(this.price)
       .end((error, response) => {
         if (error) return done(error);
-        expect(response.status).equal(201);
+        expect(response.status).equal(200);
         expect(Date.parse(response.body.startTime)).equal(Date.parse(this.price.startTime));
         expect(Date.parse(response.body.endTime)).equal(Date.parse(this.price.endTime));
         expect(response.body.lotID.toString()).equal(this.lot._id.toString());
@@ -66,26 +62,24 @@ describe('Price Override POST Route', function() {
     });
   });
 
-  describe('Unauthorized Request', () => {
-    it('should return a 401 status code', done => {
-      request.post(`${url}/api/lot/${this.lot._id}/price`)
-      .send(this.price)
+  describe('Unregistered Id', () => {
+    it('should return a 404 status code', done => {
+      request.get(`${url}/api/lot/${this.lot._id}/price/123456`)
+      .set({
+        Authorization: `Bearer ${this.hostToken}`
+      })
       .end((error, response) => {
-        expect(response.status).equal(401);
+        expect(response.status).to.equal(404);
         done();
       });
     });
   });
 
-  describe('Invalid Data', () => {
-    it('should return a 400 status code', done => {
-      request.post(`${url}/api/lot/${this.lot._id}/price`)
-      .set({
-        Authorization: `Bearer ${this.hostToken}`
-      })
-      .send()
+  describe('Unauthorized Request', () => {
+    it('should return 401 status code', done => {
+      request.get(`${url}/api/lot/${this.lot._id}/price/${this.price._id}`)
       .end((error, response) => {
-        expect(response.status).equal(400);
+        expect(response.status).to.equal(401);
         done();
       });
     });
