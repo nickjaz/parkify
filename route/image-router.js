@@ -62,7 +62,6 @@ imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), fu
       userID: request.user._id,
       lotID: request.params.lotID
     };
-
     return new Image(imageData).save();
   })
   .then( image => response.json(image))

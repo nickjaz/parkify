@@ -11,7 +11,8 @@ const Timeslot = require('../../model/timeslot.js');
 const generateUser = require('../lib/generate-user.js');
 const generateLot = require('../lib/generate-lot.js');
 const generateSpot = require('../lib/generate-spot.js');
-const generateTimeslot = require('../lib/generate-timeslot');
+const generateTimeslot = require('../lib/generate-timeslot.js');
+
 
 const url = `http://localhost:${process.env.PORT}`;
 

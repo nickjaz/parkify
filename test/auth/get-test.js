@@ -103,7 +103,7 @@ describe('Auth Routes', function () {
     describe('no name in auth', function () {
       before(done => {
         let noNameUser = {
-          name: 'fake',
+          name: 'gig',
           password: '1234',
           email: 'exampleuser@test.com'
         };
@@ -122,12 +122,10 @@ describe('Auth Routes', function () {
         .catch(done);
       });
       it('should return a token', done => {
-        request.get(`${url}/api/signin`)
-        .set({
-          Authorization: 'Basic fam'
-        })
+        request.get(`${url}/api/signout`)
+        .auth('exampleUser', '1234')
         .end((error, response) => {
-          expect(response.status).to.equal(401);
+          expect(response.status).to.equal(404);
           done();
         });
       });
