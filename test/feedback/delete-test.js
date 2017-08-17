@@ -59,5 +59,26 @@ describe('Feedback Delete Route', function() {
         });
       });
     });
+
+    describe('nonexistent id', () => {
+      it('should return 404 status code', done => {
+        request.delete(`${url}/api/feedback/1234567890`)
+        .set({ Authorization: `Bearer ${this.hostToken}` })
+        .end((error, response) => {
+          expect(response.status).to.equal(404);
+          done();
+        });
+      });
+    });
+
+    describe('unauthorized id', () => {
+      it('should return 401 status code', done => {
+        request.delete(`${url}/api/feedback/${this.feedback._id}`)
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
   });
 });
