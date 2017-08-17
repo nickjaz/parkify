@@ -17,7 +17,7 @@ const bearerAuth = require('../lib/bearer-auth-middleware.js');
 AWS.config.setPromisesDependency(require('bluebird'));
 
 const s3 = new AWS.S3();
-const dataDir = `${__dirname}/../../data`;
+const dataDir = `${__dirname}/../data`;
 const upload = multer({ dest: dataDir });
 
 const imageRouter = module.exports = Router();
@@ -50,7 +50,7 @@ imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), fu
   Lot.findById(request.params.lotID)
   .then( () => s3uploadProm(params))
   .then( s3data => {
-    del[`${dataDir}/*`];
+    del([`${dataDir}/*`]);
 
     let imageData = {
       objectKey: s3data.Key,
@@ -59,7 +59,7 @@ imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), fu
       lotID: request.params.lotID
     };
 
-    return new Image(imageData).save();
+    return Image.create(imageData);
   })
   .then( image => response.json(image))
   .catch(error => next(error));
@@ -86,10 +86,12 @@ imageRouter.delete('/api/lot/:id/image/:id', bearerAuth, function(request, respo
       Key: image.objectKey
     };
 
-    s3.deleteObject(params, (error, s3data) => {
-      Image.findByIdAndRemove(s3data._id)
-      .then(response.sendStatus(204))
-      .catch(error => next(error));
+    s3.deleteObject(params, error => {
+      if (error) {
+        return next(error);
+      }
+      
+      response.sendStatus(204);
     });
   })
   .catch(error => next(createError(404, error.message)));

@@ -2,25 +2,16 @@
 
 const expect = require('chai').expect;
 const request = require('superagent');
+const fs = require('fs');
 
+const generateUser = require('../lib/generate-user.js');
+const generateLot = require('../lib/generate-lot.js');
 const User = require('../../model/user.js');
 const Lot = require('../../model/lot.js');
 
 require('../../server.js');
 
 const url = `http://localhost:${process.env.PORT}`;
-
-const exampleUser = {
-  name: 'exampleuser',
-  password: '12345',
-  email: 'example@test.com'
-};
-
-const exampleLot = {
-  name: 'example lot name',
-  description: 'example lot description',
-  address: 'example address'
-};
 
 const exampleImage = {
   image: `${__dirname}/../../data/test.png`
@@ -30,30 +21,23 @@ describe('Image Delete Route', function() {
 
   describe('DELETE: /api/lot/:lotID/image/:id', function() {
     before( done => {
-      new User(exampleUser)
-      .generatePasswordHash(exampleUser.password)
-      .then( user => {
-        return user.save();
+      generateUser()
+      .then(data => {
+        this.tempUser = data.user;
+        this.tempToken = data.token;
       })
-      .then( user => {
-        this.tempUser = user;
-        return user.generateToken();
-      })
-      .then( token => {
-        this.tempToken = token;
+      .then(() => generateLot(this.tempUser._id))
+      .then(lot => {
+        this.tempLot = lot;
         done();
       })
       .catch(done);
     });
 
-    before( done => {
-      exampleLot.userID = this.tempUser._id.toString();
-      new Lot(exampleLot).save()
-      .then( lot => {
-        this.tempLot = lot;
+    before(done => {
+      fs.link(`${__dirname}/../data/test.png`, exampleImage.image, () => {
         done();
-      })
-      .catch(done);
+      });
     });
 
     before( done => {
