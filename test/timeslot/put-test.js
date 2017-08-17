@@ -13,6 +13,7 @@ const generateLot = require('../lib/generate-lot.js');
 const generateSpot = require('../lib/generate-spot.js');
 const generateTimeslot = require('../lib/generate-timeslot.js');
 
+
 const url = `http://localhost:${process.env.PORT}`;
 
 require('../../server.js');
