@@ -3,7 +3,6 @@
 const expect = require('chai').expect;
 const request = require('superagent');
 
-const Image = require('../../model/image.js');
 const User = require('../../model/user.js');
 const Lot = require('../../model/lot.js');
 
@@ -27,9 +26,9 @@ const exampleImage = {
   image: `${__dirname}/../../data/test.png`
 };
 
-describe('Image Post Route', function() {
+describe('Image Delete Route', function() {
 
-  describe('POST: /api/lot/:lotID/image', function() {
+  describe('DELETE: /api/lot/:lotID/image/:id', function() {
     before( done => {
       new User(exampleUser)
       .generatePasswordHash(exampleUser.password)
@@ -57,51 +56,60 @@ describe('Image Post Route', function() {
       .catch(done);
     });
 
+    before( done => {
+      request.post(`${url}/api/lot/${this.tempLot._id}/image`)
+      .set({
+        Authorization: `Bearer ${this.tempToken}`
+      })
+      .attach('image', exampleImage.image)
+      .then( image => {
+        this.tempImage = image.body;
+        done();
+      })
+      .catch(done);
+    });
+
     after( done => {
       Promise.all([
         User.remove({}),
-        Lot.remove({}),
-        Image.remove({})
+        Lot.remove({})
       ])
       .then( () => done())
       .catch(done);
     });
 
     describe('valid request', () => {
-
-      it('should return 200 status code', done => {
-        request.post(`${url}/api/lot/${this.tempLot._id}/image`)
+      it('should return 204 status code', done => {
+        request.delete(`${url}/api/lot/${this.tempLot._id}/image/${this.tempImage._id}`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
-        .attach('image', exampleImage.image)
         .end((error, response) => {
           if(error) return done(error);
-          expect(response.status).to.equal(200);
-          done();
-        });
-      });
-    });
-
-    describe('invalid data', () => {
-      it('should return 400', done => {
-        request.post(`${url}/api/lot/${this.tempLot._id}/image`)
-        .set({
-          Authorization: `Bearer ${this.tempToken}`
-        })
-        .end((error, response) => {
-          expect(response.status).to.equal(400);
+          expect(response.status).to.equal(204);
           done();
         });
       });
     });
 
     describe('unauthorized request', () => {
-      it('should return 401', done => {
-        request.post(`${url}/api/lot/${this.tempLot._id}/image`)
-        .attach('image', exampleImage.image)
+      it('should return 401 status code', done => {
+        request.delete(`${url}/api/lot/${this.tempLot._id}/image/${this.tempImage._id}`)
         .end((error, response) => {
           expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+
+    describe('nonexistent id', () => {
+      it('should return 404 status code', done => {
+        request.delete(`${url}/api/lot/${this.tempLot._id}/image/1234567890`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(404);
           done();
         });
       });

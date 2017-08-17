@@ -19,7 +19,6 @@ AWS.config.setPromisesDependency(require('bluebird'));
 const s3 = new AWS.S3();
 
 const dataDir = `${__dirname}/../../data`;
-
 const upload = multer({ dest: dataDir });
 
 const imageRouter = module.exports = Router();
@@ -27,6 +26,7 @@ const imageRouter = module.exports = Router();
 function s3uploadProm(params) {
   return new Promise((resolve, reject) => {
     s3.upload(params, (error, s3data) => {
+      if (error) reject(error);
       resolve(s3data);
     });
   });
@@ -70,4 +70,34 @@ imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), fu
     response.sendStatus(201);
   })
   .catch(error => next(error));
+});
+
+imageRouter.get('/api/lot/:lotID/image/:id', bearerAuth, function(request, response, next) {
+  debug('GET: /api/lot/:lotID/image/:id');
+
+  Image.findById(request.params.id)
+  .then( image => {
+    if (!image) return next(createError(404, 'Image Not Found'));
+    response.json(image);
+  })
+  .catch(error => next(createError(404, error.message)));
+});
+
+imageRouter.delete('/api/lot/:id/image/:id', bearerAuth, function(request, response, next) {
+  debug('DELETE: /api/lot/:lotID/image/:id');
+
+  Image.findById(request.params.id)
+  .then( image => {
+    let params = {
+      Bucket: process.env.AWS_BUCKET,
+      Key: image.objectKey
+    };
+
+    s3.deleteObject(params, (error, s3data) => {
+      Image.findByIdAndRemove(s3data._id)
+      .then(response.sendStatus(204))
+      .catch(error => next(error));
+    });
+  })
+  .catch(error => next(createError(404, error.message)));
 });

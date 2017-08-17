@@ -24,12 +24,12 @@ const exampleLot = {
 };
 
 const exampleImage = {
-  image: `${__dirname}/../../data/test.png`
+  objectKey: 'exampleimage.png',
+  imageURI: 'http://amazon-aws.com/exampleimage.png'
 };
 
-describe('Image Post Route', function() {
-
-  describe('POST: /api/lot/:lotID/image', function() {
+describe('Image Get Routes', function() {
+  describe('GET: /api/lot/:lotID/image/:id', function() {
     before( done => {
       new User(exampleUser)
       .generatePasswordHash(exampleUser.password)
@@ -57,6 +57,17 @@ describe('Image Post Route', function() {
       .catch(done);
     });
 
+    before( done => {
+      exampleImage.lotID = this.tempLot._id.toString();
+      exampleImage.userID = this.tempUser._id.toString();
+      new Image(exampleImage).save()
+      .then( image => {
+        this.tempImage = image;
+        done();
+      })
+      .catch(done);
+    });
+
     after( done => {
       Promise.all([
         User.remove({}),
@@ -68,40 +79,39 @@ describe('Image Post Route', function() {
     });
 
     describe('valid request', () => {
-
-      it('should return 200 status code', done => {
-        request.post(`${url}/api/lot/${this.tempLot._id}/image`)
+      it('should return 200 and correct property values', done => {
+        request.get(`${url}/api/lot/${this.tempLot._id}/image/${this.tempImage._id}`)
         .set({
           Authorization: `Bearer ${this.tempToken}`
         })
-        .attach('image', exampleImage.image)
         .end((error, response) => {
           if(error) return done(error);
           expect(response.status).to.equal(200);
-          done();
-        });
-      });
-    });
-
-    describe('invalid data', () => {
-      it('should return 400', done => {
-        request.post(`${url}/api/lot/${this.tempLot._id}/image`)
-        .set({
-          Authorization: `Bearer ${this.tempToken}`
-        })
-        .end((error, response) => {
-          expect(response.status).to.equal(400);
+          expect(response.body.objectKey).to.equal(exampleImage.objectKey);
+          expect(response.body.imageURI).to.equal(exampleImage.imageURI);
           done();
         });
       });
     });
 
     describe('unauthorized request', () => {
-      it('should return 401', done => {
-        request.post(`${url}/api/lot/${this.tempLot._id}/image`)
-        .attach('image', exampleImage.image)
+      it('should return 401 status code', done => {
+        request.get(`${url}/api/lot/${this.tempLot._id}/image/${this.tempImage._id}`)
         .end((error, response) => {
           expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+
+    describe('nonexistent id', () => {
+      it('should return 404 status code', done => {
+        request.get(`${url}/api/lot/${this.tempLot._id}/image/1234567890`)
+        .set({
+          Authorization: `Bearer ${this.tempToken}`
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(404);
           done();
         });
       });
