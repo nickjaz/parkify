@@ -63,26 +63,25 @@ describe('Feedback Get Route', function() {
       });
     });
 
+    describe('unauthorized request', () => {
+      it('should return a 401 status code', done => {
+        request.get(`${url}/api/feedback/${this.feedback._id}`)
+        .end((error, response) => {
+          expect(response.status).to.equal(401);
+          done();
+        });
+      });
+    });
+
     describe('nonexistent id', () => {
       it('should return a 404 status code', done => {
         request.get(`${url}/api/feedback/1234567890`)
-        .set({ Authorization: `Bearer ${this.hostTokens}`})
+        .set({ Authorization: `Bearer ${this.hostToken}`})
         .end((error, response) => {
           expect(response.status).to.equal(404);
           done();
         });
       });
     });
-//
-//     describe('unauthorized request', () => {
-//       it('should return a 401 status code', done => {
-//         request.get(`${url}/api/feedback/${this.feedback._id}`)
-//         .end((error, response) => {
-//           expect(response.status).to.equal(401);
-//           done();
-//         });
-//       });
-//     });
-//   });
   });
 });

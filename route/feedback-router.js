@@ -23,7 +23,7 @@ feedbackRouter.post('/api/feedback', bearerAuth, jsonParser, function(request, r
   .catch(next);
 });
 
-feedbackRouter.get('/api/feedback/:id', function(request, response, next) {
+feedbackRouter.get('/api/feedback/:id', bearerAuth, function(request, response, next) {
   debug('GET: /api/feedback/:id');
 
   Feedback.findById(request.params.id)
