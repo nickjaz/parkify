@@ -38,10 +38,6 @@ imageRouter.post('/api/lot/:lotID/image', bearerAuth, upload.single('image'), fu
     return next(createError(400, 'file not found'));
   }
 
-  if (!request.file.path) {
-    return next(createError(500, 'file not saved'));
-  }
-
   let ext = path.extname(request.file.originalname);
 
   let params = {
