@@ -86,10 +86,12 @@ imageRouter.delete('/api/lot/:id/image/:id', bearerAuth, function(request, respo
       Key: image.objectKey
     };
 
-    s3.deleteObject(params, (error, s3data) => {
-      Image.findByIdAndRemove(s3data._id)
-      .then(response.sendStatus(204))
-      .catch(error => next(error));
+    s3.deleteObject(params, error => {
+      if (error) {
+        return next(error);
+      }
+      
+      response.sendStatus(204);
     });
   })
   .catch(error => next(createError(404, error.message)));
