@@ -6,10 +6,10 @@ const Spot = require('../../model/spot.js');
 let generateSpot = function(lotID) {
   debug('generateSpot');
 
-  let testSpotData = { 
+  let testSpotData = {
     name: 'parking spot',
     description: 'test description',
-    lotID: lotID 
+    lotID: lotID
   };
 
   return Spot.create(testSpotData);
