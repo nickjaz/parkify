@@ -30,9 +30,6 @@ describe('Price Override DELETE Route:', function() {
     .then( () => generatePrice(this.lot._id))
     .then( tempPrice => {
       this.price = tempPrice;
-      this.updatedPrice = {
-        startTime: Date('017-09-14T01:00:00.000Z')
-      };
       done();
     })
     .catch(done);
@@ -47,3 +44,42 @@ describe('Price Override DELETE Route:', function() {
     .then( () => done())
     .catch(done);
   });
+
+  describe('Valid Request', () => {
+    it('should return 204 status code', done => {
+      request.delete(`${url}/api/lot/${this.lot._id}/price/${this.price._id}`)
+      .set({
+        Authorization: `Bearer ${this.hostToken}`
+      })
+      .end((error, response) => {
+        if (error) return done(error);
+        expect(response.status).to.equal(204);
+        done();
+      });
+    });
+  });
+
+
+  describe('Unregistered Id', () => {
+    it('should return a 404 status code', done => {
+      request.delete(`${url}/api/lot/${this.lot._id}/price/123456`)
+      .set({
+        Authorization: `Bearer ${this.hostToken}`
+      })
+      .end((error, response) => {
+        expect(response.status).to.equal(404);
+        done();
+      });
+    });
+  });
+
+  describe('Unauthorized Request', () => {
+    it('should return 401 status code', done => {
+      request.delete(`${url}/api/lot/${this.lot._id}/price/${this.price._id}`)
+      .end((error, response) => {
+        expect(response.status).to.equal(401);
+        done();
+      });
+    });
+  });
+});
