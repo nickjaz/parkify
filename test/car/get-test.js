@@ -79,5 +79,17 @@ describe('GET: /api/car/:id', function() {
       });
     });
   });
-});
 
+  describe('Invalid Authentication', () => {
+    it('should return a 401', done => {
+      request.get(`${url}/api/car/${this.car._id}`)
+      .set({ Authorization: `${this.userToken}` })
+      .end((error, response) => {
+        expect(response.status).equal(401);
+        expect(error.name).equal('Error');
+        expect(error.message).equal('Unauthorized');
+        done();
+      });
+    });
+  });
+});
