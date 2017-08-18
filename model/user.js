@@ -73,8 +73,7 @@ userSchema.methods.generateToken = function () {
     this.generateTokenHash()
     .then(tokenHash => {
       resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET));
-    })
-    .catch(err => reject(err));
+    });
   });
 };
 
@@ -86,10 +85,6 @@ userSchema.statics.createAuthenticated = function(userData, callback) {
     user.generateToken()
     .then(token => {
       callback(null, user, token);
-      return Promise.resolve();
-    })
-    .catch(error => {
-      callback(error);
       return Promise.resolve();
     });
   })
