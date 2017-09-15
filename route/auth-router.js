@@ -20,7 +20,7 @@ authRouter.post('/api/signup', jsonParser, function(request, response, next) {
   .then( user => user.save())
   .then( user => user.generateToken())
   .then( token => {
-    response.token('Parkify-Token', token, {maxAge:900000})
+    response.cookie('Parkify-Token', token, {maxAge:900000})
     response.send(token);
   })
   .catch(next);
