@@ -11,6 +11,7 @@ const lotSchema = Schema({
   name: { type: String, required: true },
   description: { type: String },
   address: { type: String, required: true, unique: true },
+  coordinates: { type: Array, required: true, unique: true },
   prices: [{ type: Schema.Types.ObjectId, ref: 'price' }],
   userID: { type: Schema.Types.ObjectId, required: true },
   spots: [{ type: Schema.Types.ObjectId, ref: 'spot' }]

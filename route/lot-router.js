@@ -7,15 +7,17 @@ const debug = require('debug')('parkify:lot-router');
 
 const Lot = require('../model/lot.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
+const geocoder = require('../lib/geocoder.js');
 
 const lotRouter = module.exports = Router();
 
-lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, next) {
+lotRouter.post('/api/lot', bearerAuth, jsonParser, geocoder, function(request, response, next) {
   debug('POST: /api/lot');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
   request.body.userID = request.user._id;
+  console.log(request.body);
 
   Lot.create(request.body)
   .then( lot => {
@@ -36,7 +38,7 @@ lotRouter.get('/api/lot/:id', bearerAuth, function(request, response, next) {
   .catch(err => next(createError(404, err.message)));
 });
 
-lotRouter.put('/api/lot/:id', bearerAuth, jsonParser, function(request, response, next) {
+lotRouter.put('/api/lot/:id', bearerAuth, jsonParser, geocoder, function(request, response, next) {
   debug('PUT: api/lot/:lotID');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
