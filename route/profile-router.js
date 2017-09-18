@@ -5,7 +5,7 @@ const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 const debug = require('debug')('parkify:profile-router');
 
-const Profile = require('../profile/profile.js');
+const Profile = require('../model/profile.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const profileRouter = module.exports = Router();
