@@ -10,7 +10,7 @@ const authRouter = module.exports = Router();
 
 authRouter.post('/api/signup', jsonParser, function(request, response, next) {
   debug('POST: /api/signup');
-  
+
   let password = request.body.password;
   delete request.body.password;
 
@@ -20,6 +20,7 @@ authRouter.post('/api/signup', jsonParser, function(request, response, next) {
   .then( user => user.save())
   .then( user => user.generateToken())
   .then( token => {
+    response.cookie('X-Parkify-Token', token, {maxAge:900000})
     response.send(token);
   })
   .catch(next);
