@@ -25,10 +25,10 @@ profileRouter.post('/api/profile', bearerAuth, jsonParser, function(request, res
   .catch(next);
 });
 
-profileRouter.get('/api/profile/:id', bearerAuth, function(request, response, next) {
-  debug('GET: api/profile/:profileID');
+profileRouter.get('/api/profile', bearerAuth, function(request, response, next) {
+  debug('GET: api/profile');
 
-  Profile.findById(request.params.id)
+  Profile.findOne({ userID: request.user._id })
   .then(profile => {
     if (!profile) return next(createError(404, 'Profile Not Found'));
     response.json(profile);
@@ -36,20 +36,29 @@ profileRouter.get('/api/profile/:id', bearerAuth, function(request, response, ne
   .catch(error => next(createError(404, error.message)));
 });
 
-profileRouter.put('/api/profile/:id', bearerAuth, jsonParser, function(request, response, next) {
-  debug('PUT: api/lot/:profileID');
+profileRouter.put('/api/profile', bearerAuth, jsonParser, function(request, response, next) {
+  debug('PUT: api/profile');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
-  Profile.findByIdAndUpdate(request.params.id, request.body, { new: true })
+  Profile.findOne({ userID: request.user._id })
+  .then(profile => {
+    for (let key in request.body) {
+      profile[key] = request.body[key];
+    }
+    return profile.save();
+  })
   .then(profile => response.json(profile))
   .catch(error => next(createError(404, error.message)));
 });
 
-profileRouter.delete('/api/profile/:id', bearerAuth, function(request, response, next) {
-  debug('DELETE: /api/profile/:id');
+profileRouter.delete('/api/profile', bearerAuth, function(request, response, next) {
+  debug('DELETE: /api/profile');
 
-  Profile.findByIdAndRemove(request.params.id)
+  Profile.findOne({ userID: request.user._id })
+  .then(profile => {
+    return profile.remove();
+  })
   .then(() => response.sendStatus(204))
   .catch(err => next(createError(404, err.message)));
 });
