@@ -21,7 +21,7 @@ function generateTransactions(context, spots) {
       endTime = time1;
     }
     
-    let price = generatePrice(startTime, endTime, spot);
+    let price = generatePrice(startTime, endTime);
 
     let transaction = {
       startTime: startTime,

@@ -1,13 +1,21 @@
-function generatePrice(startTime, endTime, spot) {
-  return price(toFloatHour(endTime)) - price(toFloatHour(startTime))  + (2 * Math.rand() - 1); 
+let {cos, PI} = Math;
+
+function generatePrice(startTime, endTime) {
+  let startTimeFloat = toFloatHour(startTime);
+  let endTimeFloat = toFloatHour(endTime);
+
+  console.log(startTime);
+  console.log(endTime);
+
+  return price(endTimeFloat) - price(startTimeFloat) + (2 * Math.random() - 1); 
 }
 
 function toFloatHour(time) {
-  return time.getSeconds() / 360 + time.getMinutes() / 60 + time.getHours();
+  return (time.getSeconds() / 360 + time.getMinutes() / 60 + time.getHours());
 }
 
-function price(floatHour) {
-  return 2 * floatHour - (6 / Math.PI) * Math.cos((Math.PI / 24) * floatHour) - (72 / Math.PI) * Math.cos((Math.PI / 8) * floatHour);
+function price(x) {
+  return ((2 * x) - (72 / PI) * cos((PI / 24) * x) - (6 / PI) * cos((PI / 8) * x));
 }
 
 module.exports = generatePrice;

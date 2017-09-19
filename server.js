@@ -17,6 +17,8 @@ const timeslotRouter = require('./route/timeslot-router.js');
 const transactionRouter = require('./route/transaction-router.js');
 const errorHandler = require('./lib/error-handler.js');
 
+const generateData = require('./test/prediction/generate-data.js');
+
 dotenv.load();
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -40,4 +42,5 @@ app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
   debug(`listening on: ${process.env.PORT}`);
+  generateData();
 });

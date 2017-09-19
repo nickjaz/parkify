@@ -38,4 +38,4 @@ function getNearbyPlaces(latitude, longitude, distanceRadius, type) {
   });
 }
 
-module.export = getNearbyPlaces;
+module.exports = getNearbyPlaces;
