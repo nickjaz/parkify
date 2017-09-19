@@ -21,7 +21,7 @@ authRouter.post('/api/signup', jsonParser, function(request, response, next) {
   .then( user => user.save())
   .then( user => user.generateToken())
   .then( token => {
-    response.cookie('X-Parkify-Token', token, {maxAge:900000})
+    response.cookie('X-Parkify-Token', token, {maxAge:900000});
     response.send(token);
   })
   .catch(next);
@@ -57,7 +57,7 @@ authRouter.get('/oauth/google/code*', (request, response) => {
       return User.handleOAuth(response.body);
     })
     .then(user => {
-      return user.tokenCreate();
+      return user.generateToken();
     })
     .then(token => {
       response.cookie('X-Parkify-Token', token);
