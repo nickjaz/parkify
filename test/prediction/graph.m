@@ -11,3 +11,5 @@ xlabel("hour of day");
 ylabel("price ($)");
 axis([0,24,0,15]);
 print -dpng figure1.png;
+
+y3 = (2 * x) - (72 / pi) * cos((pi / 24) * x) * cos
