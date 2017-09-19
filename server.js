@@ -26,7 +26,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGINS,
+  credentials: true,
+}));
 app.use(morgan('dev'));
 app.use(authRouter);
 app.use(carRouter);
