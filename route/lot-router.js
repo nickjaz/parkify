@@ -10,6 +10,15 @@ const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
 const lotRouter = module.exports = Router();
 
+lotRouter.get('/api/lots', bearerAuth, function(request, response, next) {
+  debug('GET: /api/lots');
+
+  console.log('LOTS REQUEST:', request);
+  Lot.find({ userID: request.user._id })
+  .then(lots => response.send(lots))
+  .catch(next);
+});
+
 lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, next) {
   debug('POST: /api/lot');
 
