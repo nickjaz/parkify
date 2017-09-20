@@ -32,7 +32,7 @@ authRouter.get('/api/signin', basicAuth, function(request, response, next) {
 
   User.findOne({ name: request.auth.name })
   .then( user => user.comparePasswordHash(request.auth.password))
-  .then( token => response.send(token))
+  .then( user => response.send(user.tokenHash))
   .catch(next);
 });
 
