@@ -19,9 +19,23 @@ authRouter.post('/api/signup', jsonParser, function(request, response, next) {
   let user = new User(request.body);
 
   user.generatePasswordHash(password)
-  .then( user => user.save())
-  .then( user => user.generateToken())
-  .then( token => {
+  .then(user => user.save())
+  .then(user => {
+    return new Promise((resolve, reject) => {
+      Profile.create({
+        name: user.name,
+        email: user.email,
+        userID: user._id
+      })
+      .then(profile => {
+        console.log(profile);
+        resolve(user);
+      })
+      .catch(reject);
+    });
+  })
+  .then(user => user.generateToken())
+  .then(token => {
     response.cookie('X-Parkify-Token', token, {maxAge:900000});
     response.send(token);
   })
