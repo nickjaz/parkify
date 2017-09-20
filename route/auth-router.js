@@ -5,6 +5,7 @@ const debug = require('debug')('parkify:auth-router');
 const Router = require('express').Router;
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/user.js');
+const Profile = require('../model/profile.js');
 const superagent = require('superagent');
 
 const authRouter = module.exports = Router();
@@ -61,12 +62,25 @@ authRouter.get('/oauth/google/code*', (request, response) => {
       return User.handleOAuth(response.body);
     })
     .then(user => {
+      return new Promise((resolve, reject) => {
+        Profile.create({
+          name: user.name,
+          email: user.email,
+          userID: user._id
+        })
+        .then(profile => {
+          console.log(profile);
+          resolve(user);
+        })
+        .catch(reject);
+      });
+    })
+    .then(user => {
       return user.generateToken();
     })
     .then(token => {
       response.cookie('X-Parkify-Token', token);
       response.redirect(process.env.CLIENT_URL);
-      response.send(token);
     })
     .catch((error) => {
       console.error(error);
