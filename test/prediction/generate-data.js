@@ -23,9 +23,9 @@ let generateData = function() {
     .then(places => generateLots(context, places))
     .then(lots => generateSpots(context, lots))
     .then(spots => generateTransactions(context, spots))
-    .then(transactions => transactions.forEach(transaction => {
-      console.log('Start:', transaction.startTime, 'End:', transaction.endTime, 'Price:', transaction.price);
-    }))
+    // .then(transactions => transactions.forEach(transaction => {
+    //   console.log('Start:', transaction.startTime, 'End:', transaction.endTime, 'Price:', transaction.price);
+    // }))
     .catch(error => reject(error));
   });
 };
