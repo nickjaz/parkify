@@ -19,8 +19,8 @@ profileRouter.post('/api/profile', bearerAuth, jsonParser, function(request, res
 
   Profile.create(request.body)
   .then(profile => {
-    response.set('Location', `/api/profile/${profile._id}`);
-    response.sendStatus(201);
+    response.status(201);
+    response.send(profile);
   })
   .catch(next);
 });
@@ -31,7 +31,7 @@ profileRouter.get('/api/profile', bearerAuth, function(request, response, next) 
   Profile.findOne({ userID: request.user._id })
   .then(profile => {
     if (!profile) return next(createError(404, 'Profile Not Found'));
-    response.json(profile);
+    response.send(profile);
   })
   .catch(error => next(createError(404, error.message)));
 });
