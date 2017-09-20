@@ -4,9 +4,6 @@ function generatePrice(startTime, endTime) {
   let startTimeFloat = toFloatHour(startTime);
   let endTimeFloat = toFloatHour(endTime);
 
-  console.log(startTime);
-  console.log(endTime);
-
   return price(endTimeFloat) - price(startTimeFloat) + (2 * Math.random() - 1); 
 }
 
