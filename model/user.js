@@ -16,7 +16,7 @@ let User;
 const userSchema = Schema({
   name: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String },
   tokenHash: { type: String, unique: true }
 });
 
@@ -92,7 +92,7 @@ userSchema.statics.handleOAuth = function(data) {
   })
   .catch(() => {
     return new User({
-      username: data.given_name,
+      name: data.given_name,
       email: data.email
     }).save();
   });
