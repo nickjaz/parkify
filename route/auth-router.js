@@ -32,7 +32,11 @@ authRouter.get('/api/signin', basicAuth, function(request, response, next) {
 
   User.findOne({ name: request.auth.name })
   .then( user => user.comparePasswordHash(request.auth.password))
-  .then( user => response.send(user.tokenHash))
+  .then( user => user.generateToken())
+  .then( token => {
+    response.cookie('X-Parkify-Token', token, {maxAge:900000});
+    response.send(token);
+  })
   .catch(next);
 });
 
