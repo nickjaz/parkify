@@ -20,7 +20,7 @@ const exampleUser = {
 const exampleLot = {
   name: 'example name',
   description: 'example description',
-  address: 'example address'
+  address: '2901 3rd Ave #300, Seattle, WA 98121'
 };
 
 describe('Lot Post Route', function() {

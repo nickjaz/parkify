@@ -6,7 +6,7 @@ const debug = require('debug')('parkify:price-router');
 const jsonParser = require('body-parser').json();
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
-const Lot = require('../model/lot.js')
+const Lot = require('../model/lot.js');
 const Price = require('../model/price.js');
 
 const priceRouter = module.exports = Router();

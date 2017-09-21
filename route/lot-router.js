@@ -7,10 +7,21 @@ const debug = require('debug')('parkify:lot-router');
 
 const Lot = require('../model/lot.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
+const geocoder = require('../lib/geocoder.js');
 
 const lotRouter = module.exports = Router();
 
-lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, next) {
+lotRouter.get('/api/lots', bearerAuth, function(request, response, next) {
+  debug('GET: /api/lots');
+
+  Lot.find({ userID: request.user._id })
+  .populate('prices')
+  .populate('spots')
+  .then(lots => response.send(lots))
+  .catch(next);
+});
+
+lotRouter.post('/api/lot', bearerAuth, jsonParser, geocoder, function(request, response, next) {
   debug('POST: /api/lot');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
@@ -20,7 +31,7 @@ lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, n
   Lot.create(request.body)
   .then( lot => {
     response.set('Location', `/api/lot/${lot._id}`);
-    response.sendStatus(201);
+    response.send(lot).status(201);
   })
   .catch(next);
 });
@@ -29,6 +40,8 @@ lotRouter.get('/api/lot/:id', bearerAuth, function(request, response, next) {
   debug('GET: api/lot/:lotID');
 
   Lot.findById(request.params.id)
+  .populate('spots')
+  .populate('prices')
   .then( lot => {
     if (!lot) return next(createError(404, 'Lot Not Found'));
     response.json(lot);
@@ -36,7 +49,7 @@ lotRouter.get('/api/lot/:id', bearerAuth, function(request, response, next) {
   .catch(err => next(createError(404, err.message)));
 });
 
-lotRouter.put('/api/lot/:id', bearerAuth, jsonParser, function(request, response, next) {
+lotRouter.put('/api/lot/:id', bearerAuth, jsonParser, geocoder, function(request, response, next) {
   debug('PUT: api/lot/:lotID');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));

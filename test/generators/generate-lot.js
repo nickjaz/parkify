@@ -9,7 +9,8 @@ let generateLot = function(userID) {
   let testLotData = {
     name: 'parking lot',
     description: 'test description',
-    address: '1 Codefellows Way, Seattle, WA',
+    address: '2901 3rd Ave #300, Seattle, WA 98121',
+    coordinates: [-122.3518689, 47.6182499],
     userID: userID
   };
 
