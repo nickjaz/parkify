@@ -20,7 +20,7 @@ lotRouter.get('/api/lots', bearerAuth, function(request, response, next) {
   .catch(next);
 });
 
-lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, next) {
+lotRouter.post('/api/lot', bearerAuth, jsonParser, geocoder, function(request, response, next) {
   debug('POST: /api/lot');
 
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
