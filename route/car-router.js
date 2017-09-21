@@ -33,6 +33,14 @@ carRouter.get('/api/car/:carID', bearerAuth, function(request, response, next) {
   .catch( error => next(createError(404, error.message)));
 });
 
+carRouter.get('/api/cars', bearerAuth, function(request, response, next) {
+  debug('GET: /api/cars');
+
+  Car.find({})
+  .then(cars => response.send(cars))
+  .catch(error => next(createError(404, error.message)));
+});
+
 carRouter.put('/api/car/:carID', bearerAuth, jsonParser, function(request, response, next) {
   debug('PUT: /api/car/:carID');
 

@@ -16,7 +16,7 @@ let User;
 const userSchema = Schema({
   name: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String },
   tokenHash: { type: String, unique: true }
 });
 
@@ -69,11 +69,32 @@ userSchema.methods.generateTokenHash = function () {
 userSchema.methods.generateToken = function () {
   debug('generateToken');
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     this.generateTokenHash()
     .then(tokenHash => {
       resolve(jwt.sign({ token: tokenHash }, process.env.APP_SECRET));
     });
+  });
+};
+
+userSchema.statics.handleOAuth = function(data) {
+  if (!data || !data.email) {
+    return Promise.reject(createError(400, 'VALIDATION ERROR - missing login information'));
+  }
+
+  return User.findOne({ email: data.email })
+  .then(user => {
+    if (!user) {
+      throw new Error('not found - create a user');
+    }
+
+    return user;
+  })
+  .catch(() => {
+    return new User({
+      name: data.given_name,
+      email: data.email
+    }).save();
   });
 };
 

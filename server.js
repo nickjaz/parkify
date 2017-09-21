@@ -14,6 +14,7 @@ const imageRouter = require('./route/image-router.js');
 const spotRouter = require('./route/spot-router.js');
 const searchRouter = require('./route/search-router.js');
 const priceRouter = require('./route/price-router.js');
+const profileRouter = require('./route/profile-router.js');
 const timeslotRouter = require('./route/timeslot-router.js');
 const transactionRouter = require('./route/transaction-router.js');
 const errorHandler = require('./lib/error-handler.js');
@@ -26,7 +27,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGINS,
+  credentials: true,
+}));
 app.use(morgan('dev'));
 app.use(authRouter);
 app.use(carRouter);
@@ -36,6 +40,7 @@ app.use(imageRouter);
 app.use(spotRouter);
 app.use(searchRouter);
 app.use(priceRouter);
+app.use(profileRouter);
 app.use(timeslotRouter);
 app.use(transactionRouter);
 app.use(errorHandler);
