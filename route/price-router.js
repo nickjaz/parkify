@@ -14,7 +14,7 @@ const priceRouter = module.exports = Router();
 priceRouter.post('/api/lot/:lotID/price', bearerAuth, jsonParser, function(request, response, next) {
   debug('/api/lot/:lotID/price');
 
-  Lot.findByIdAndAddPrice(request.params.lotID, request.body)
+  Lot.create(request.params.lotID, request.body)
   .then(price => {
     response.status(201).json(price);
   })
