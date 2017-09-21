@@ -7,9 +7,9 @@ const Schema = mongoose.Schema;
 const Timeslot = require('./timeslot.js');
 
 const spotSchema = Schema({
-  reserved: { type: Boolean, required: true, default: false },
-  startTime: { type: Date, required: true },
-  hours: { type: Number, required: true },
+  // reserved: { type: Boolean, required: true, default: false },
+  startTime: { type: Date },
+  endTime: { type: Date },
   lotID: { type: Schema.Types.ObjectId, required: true }
 });
 
