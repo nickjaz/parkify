@@ -4,12 +4,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const transactionSchema = Schema({
-  startTime: { type: Date, required: true },
-  endTime: { type: Date, required: true },
-  price: { type: Number, required: true },
+  startTime: { type: Date },
+  endTime: { type: Date },
+  price: { type: Number },
   hostID: { type: Schema.Types.ObjectId, required: true },
   guestID: { type: Schema.Types.ObjectId, required: true },
-  spotID: { type: Schema.Types.ObjectId, required: true }
+  lotID: { type: Schema.Types.ObjectId }
 });
 
 module.exports = mongoose.model('transaction', transactionSchema);
