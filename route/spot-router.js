@@ -6,8 +6,6 @@ const debug = require('debug')('parkify:spot-router');
 const jsonParser = require('body-parser').json();
 
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
-
-const Lot = require('../model/lot.js');
 const Spot = require('../model/spot.js');
 
 const spotRouter = module.exports = new Router();
@@ -15,7 +13,7 @@ const spotRouter = module.exports = new Router();
 spotRouter.post('/api/lot/:lotID/spot', bearerAuth, jsonParser, function(request, response, next) {
   debug('POST: /api/lot/:lotID/spot');
 
-  Lot.findByIdAndAddSpot(request.params.lotID, request.body)
+  Spot.create(request.body)
   .then(spot => {
     response.status(201).json(spot);
   })
@@ -26,12 +24,19 @@ spotRouter.get('/api/lot/:lotID/spot/:id', bearerAuth, jsonParser, function(requ
   debug('GET: /api/lot/:lotID/spot/:id');
 
   Spot.findById(request.params.id)
-  .populate('timeslots')
   .then(spot => {
     if(!spot) return next(createError(404, 'spot not found'));
     response.json(spot);
   })
   .catch(err => next(createError(404, err.message)));
+});
+
+spotRouter.get('/api/lot/:lotID/spots', bearerAuth, function(request, response, next) {
+  debug('GET: /api/lot/:lotID/spots');
+
+  Spot.find({lotID: request.params.lotID})
+  .then(spots => response.send(spots))
+  .catch(error => next(createError(404, error.message)));
 });
 
 spotRouter.put('/api/lot/:lotID/spot/:id', bearerAuth, jsonParser, function(request, response, next) {
