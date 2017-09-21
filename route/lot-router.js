@@ -15,6 +15,7 @@ lotRouter.get('/api/lots', bearerAuth, function(request, response, next) {
 
   Lot.find({ userID: request.user._id })
   .populate('prices')
+  .populate('spots')
   .then(lots => response.send(lots))
   .catch(next);
 });
@@ -39,6 +40,8 @@ lotRouter.get('/api/lot/:id', bearerAuth, function(request, response, next) {
   debug('GET: api/lot/:lotID');
 
   Lot.findById(request.params.id)
+  .populate('spots')
+  .populate('prices')
   .then( lot => {
     if (!lot) return next(createError(404, 'Lot Not Found'));
     response.json(lot);
