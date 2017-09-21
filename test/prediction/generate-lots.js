@@ -8,7 +8,8 @@ function generateLots(context, places) {
 
     let lot = {
       name: place.name,
-      address: `${place.geometry.location.lat},${place.geometry.location.lng}`,
+      address: place.vicinity || '',
+      coordinates: [place.geometry.location.lng, place.geometry.location.lat],
       userID: context.host._id
     };
 

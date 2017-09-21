@@ -1,3 +1,14 @@
+'use strict';
+
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.load();
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useMongoClient: true
+});
+
 const debug = require('debug')('parkify:generate-data');
 const generateUser = require('../generators/generate-user.js');
 const getNearbyPlaces = require('./get-nearby-places.js');
@@ -23,11 +34,8 @@ let generateData = function() {
     .then(places => generateLots(context, places))
     .then(lots => generateSpots(context, lots))
     .then(spots => generateTransactions(context, spots))
-    // .then(transactions => transactions.forEach(transaction => {
-    //   console.log('Start:', transaction.startTime, 'End:', transaction.endTime, 'Price:', transaction.price);
-    // }))
     .catch(error => reject(error));
   });
 };
 
-module.exports = generateData;
+generateData();

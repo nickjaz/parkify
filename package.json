@@ -10,18 +10,17 @@
     "lint": "eslint .",
     "start": "DEBUG='parkify*' node server.js",
     "start-win": "SET DEBUG=parkify* && node server.js",
-    "db-on-win": "mkdir db && mongod --dbpath db",
+    "db-on-win": "taskkill /fi \"IMAGENAME eq mongod.exe\" && rm -rf db > nul && mkdir db > nul && mongod --dbpath db",
     "db-on": "mkdir -p ./db && mongod --dbpath ./db",
     "db-off": "killall mongod",
+    "populate": "node ./test/prediction/generate-data.js",
+    "db-off-win": "taskkill /im mongod.exe /f",
     "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --recursive -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "test": "DEBUG='parkify*' && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --recursive -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "test-debug": "DEBUG='parkify*' mocha --recursive",
     "test-debug-win": "SET DEBUG=parkify* && mocha --recursive",
     "test-win": "SET DEBUG=parkify* && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --recursive -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "test-no-debug": "mocha --recursive",
-    "db-on-win": "mkdir db && mongod --dbpath db",
-    "db-on": "mkdir -p ./db && mongod --dbpath ./db",
-    "db-off": "killall mongod"
+    "test-no-debug": "mocha --recursive"
   },
   "repository": {
     "type": "git",
