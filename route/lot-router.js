@@ -26,11 +26,9 @@ lotRouter.post('/api/lot', bearerAuth, jsonParser, function(request, response, n
   if (Object.keys(request.body).length === 0) return next(createError(400, 'Bad Request'));
 
   request.body.userID = request.user._id;
-  console.log(request.body);
 
   Lot.create(request.body)
   .then( lot => {
-    console.log('THE LOT:', lot);
     response.set('Location', `/api/lot/${lot._id}`);
     response.send(lot).status(201);
   })
