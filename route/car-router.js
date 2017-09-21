@@ -36,7 +36,7 @@ carRouter.get('/api/car/:carID', bearerAuth, function(request, response, next) {
 carRouter.get('/api/cars', bearerAuth, function(request, response, next) {
   debug('GET: /api/cars');
 
-  Car.find({})
+  Car.find({userID: request.user._id})
   .then(cars => response.send(cars))
   .catch(error => next(createError(404, error.message)));
 });
