@@ -4,8 +4,8 @@ const expect = require('chai').expect;
 const request = require('superagent');
 const fs = require('fs');
 
-const generateUser = require('../../lib/generate-user.js');
-const generateLot = require('../../lib/generate-lot.js');
+const generateUser = require('../../generators/generate-user.js');
+const generateLot = require('../../generators/generate-lot.js');
 const Image = require('../../../model/image.js');
 const User = require('../../../model/user.js');
 const Lot = require('../../../model/lot.js');

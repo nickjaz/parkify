@@ -9,7 +9,7 @@ const generateUser = require('../../generators/generate-user.js');
 
 const url = `http://localhost:${process.env.PORT}`;
 
-require('../../server.js');
+require('../../../server.js');
 
 describe('POST: /api/car', function() {
   beforeEach( done => {

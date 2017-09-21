@@ -10,7 +10,7 @@ const generateCar = require('../../generators/generate-car.js');
 
 const url = `http://localhost:${process.env.PORT}`;
 
-require('../../server.js');
+require('../../../server.js');
 
 describe('DELETE: /api/car/:id', function() {
   beforeEach( done => {
