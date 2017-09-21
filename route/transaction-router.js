@@ -4,19 +4,19 @@ const Router = require('express').Router;
 const createError = require('http-errors');
 const debug = require('debug')('parkify:transaction-router');
 const jsonParser = require('body-parser').json();
-const transactionParser = require('../lib/transaction-parser.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const Transaction = require('../model/transaction.js');
 
 const transactionRouter = new Router();
 
-transactionRouter.post('/api/transaction', bearerAuth, jsonParser, transactionParser, function(request, response) {
+transactionRouter.post('/api/transaction', bearerAuth, jsonParser, function(request, response) {
   debug('POST: /api/transaction');
+
+  request.body.guestID = request.user._id;
 
   Transaction.create(request.body)
   .then(transaction => {
-    response.set('Location', `/api/lot/${transaction._id}`);
-    response.sendStatus(201);
+    response.status(201).send(transaction);
   });
 });
 
@@ -30,7 +30,7 @@ transactionRouter.get('/api/transaction/:id', bearerAuth, function(request, resp
       return next(error);
     }
 
-    response.json(transaction);
+    response.send(transaction);
   })
   .catch(error => {
     error = createError(404, error.message);
