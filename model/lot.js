@@ -5,13 +5,12 @@ const debug = require('debug');
 const createError = require('http-errors');
 const Schema = mongoose.Schema;
 const Spot = require('./spot.js');
-const Price = require('./price.js');
 
 const lotSchema = Schema({
   name: { type: String, required: true },
   description: { type: String },
-  address: { type: String, required: true, unique: true },
-  coordinates: { type: Array, required: true, unique: true },
+  address: { type: String, required: true },
+  coordinates: { type: Array, required: true },
   startTime: { type: Date },
   endTime: { type: Date },
   price: { type: Number },

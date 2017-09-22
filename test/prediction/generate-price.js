@@ -1,18 +1,27 @@
-let {cos, PI} = Math;
+'use strict';
+
+let moment = require('moment');
+let toFloatHour = require('./time-to-float-hour');
+
+let {sin, PI} = Math;
 
 function generatePrice(startTime, endTime) {
+
+  let duration = moment.duration(endTime - startTime).asHours();
   let startTimeFloat = toFloatHour(startTime);
-  let endTimeFloat = toFloatHour(endTime);
 
-  return price(endTimeFloat) - price(startTimeFloat) + (2 * Math.random() - 1); 
-}
+  let endPrice = price(startTimeFloat + duration);
+  let startPrice = price(startTimeFloat);
 
-function toFloatHour(time) {
-  return (time.getSeconds() / 360 + time.getMinutes() / 60 + time.getHours());
+  return twoDecimals(endPrice - startPrice); 
 }
 
 function price(x) {
-  return ((2 * x) - (72 / PI) * cos((PI / 24) * x) - (6 / PI) * cos((PI / 8) * x));
+  return -9 * (sin(PI * x / 6) + 2 * sin(PI * x / 12)) / PI + 4 * x;
+}
+
+function twoDecimals(x) {
+  return Math.round(x * 100) / 100;
 }
 
 module.exports = generatePrice;

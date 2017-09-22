@@ -3,48 +3,47 @@
 const Router = require('express').Router;
 const createError = require('http-errors');
 const debug = require('debug')('parkify:price-router');
-const jsonParser = require('body-parser').json();
-const bearerAuth = require('../lib/bearer-auth-middleware.js');
 
-const Lot = require('../model/lot.js');
-const Price = require('../model/price.js');
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
+const generatePrice = require('../test/prediction/generate-price.js');
 
 const priceRouter = module.exports = Router();
 
-priceRouter.post('/api/lot/:lotID/price', bearerAuth, jsonParser, function(request, response, next) {
-  debug('/api/lot/:lotID/price');
+priceRouter.get('/api/price', bearerAuth, function(request, response, next) {
 
-  Lot.create(request.params.lotID, request.body)
-  .then(price => {
-    response.status(201).json(price);
-  })
-  .catch(next);
-});
+  debug('GET: /api/price');
 
-priceRouter.get('/api/lot/:lotID/price/:id', bearerAuth, function(request, response, next) {
-  debug('GET: /api/lot/:lotID/price/:id');
+  let { startTime, endTime } = request.query;
 
-  Price.findById(request.params.id)
-  .populate('prices')
-  .then(price => {
-    if (!price) return next(createError(404, 'No price found'));
-    response.json(price);
-  })
-  .catch(err => next(createError(404, err.message)));
-});
+  if (!startTime) {
+    return next(createError(400, 'No start time provided.'));
+  }
 
-priceRouter.put('/api/lot/:lotID/price/:id', bearerAuth, jsonParser, function(request, response, next) {
-  debug('PUT: /api/lot/:lotID/price/:id');
+  if (!endTime) {
+    return next(createError(400, 'No end time provided.'));
+  }
 
-  Price.findByIdAndUpdate(request.params.id, request.body, { new: true })
-  .then(price => response.json(price))
-  .catch(err => next(createError(404, err.message)));
-});
+  if (startTime > endTime) {
+    return next(createError(400, 'The start time must be a time before the end time.'));
+  }
 
-priceRouter.delete('/api/lot/:lotID/price/:id', bearerAuth, function(request, response, next) {
-  debug('DELETE: /api/lot/:lotID/price/:id');
+  let start = new Date(startTime);
+  let end = new Date(endTime);
 
-  Price.findByIdAndRemove(request.params.id)
-  .then(() => response.sendStatus(204))
-  .catch(err => next(createError(404, err.message)));
+  if (isNaN(start.getTime())) {
+    return next(createError(400, 'The provided startTime is invalid.'));
+  }
+
+  if (isNaN(end.getTime())) {
+    return next(createError(400, 'The provided endTime is invalid.'));
+  }
+
+  try {
+    let price = generatePrice(start, end);
+    response.send({ price });
+  }
+  catch (error) {
+    return next(createError(400, error.message));
+  }
+
 });
