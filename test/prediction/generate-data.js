@@ -38,4 +38,7 @@ let generateData = function() {
   });
 };
 
-generateData();
+generateData()
+.then(() => {
+  mongoose.disconnect();
+});

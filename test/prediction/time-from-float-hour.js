@@ -1,4 +1,10 @@
+'use strict';
+
 function timeFromFloatHour(floatHour) {
+  if (!(floatHour instanceof Number)) { 
+    throw new Error('Expected parameter \'floatHour\' to be of type \'Number\'');
+  }
+
   let hourInt = Math.floor(floatHour);
   let minute = floatHour - hourInt;
   let minuteInt = Math.floor(minute * 60);
